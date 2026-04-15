@@ -16,7 +16,9 @@ export const register = catchAsync(async (req: Request, res: Response) => {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
-  res.status(201).json(new ApiResponse(true, 'User registered successfully', { user, accessToken }));
+  const { password, ...userObj } = user.toObject();
+
+  res.status(201).json(new ApiResponse(true, 'User registered successfully', { user: userObj, accessToken }));
 });
 
 export const login = catchAsync(async (req: Request, res: Response) => {
@@ -31,7 +33,9 @@ export const login = catchAsync(async (req: Request, res: Response) => {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
-  res.status(200).json(new ApiResponse(true, 'Login successful', { user, accessToken }));
+  const { password: _, ...userObj } = user.toObject();
+
+  res.status(200).json(new ApiResponse(true, 'Login successful', { user: userObj, accessToken }));
 });
 
 export const logout = catchAsync(async (req: Request, res: Response) => {

@@ -15,6 +15,10 @@ export const errorConverter = (err: any, req: Request, res: Response, next: Next
 export const errorHandler = (err: ApiError, req: Request, res: Response, next: NextFunction) => {
   const { statusCode, message } = err;
 
+  if (config.env === 'test') {
+    console.error(`[Test Error]: ${statusCode} - ${message}`, err.stack);
+  }
+
   const response = {
     success: false,
     message,

@@ -6,6 +6,14 @@ const tsJestTransformCfg = createDefaultPreset().transform;
 module.exports = {
   testEnvironment: "node",
   transform: {
-    ...tsJestTransformCfg,
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        diagnostics: {
+          ignoreCodes: [5107]
+        }
+      }
+    ]
   },
+  setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
 };

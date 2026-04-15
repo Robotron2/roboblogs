@@ -43,11 +43,10 @@ const postSchema = new Schema<IPost>(
 );
 
 // Create post slug from the title
-postSchema.pre('save', function (this: any, next: mongoose.CallbackError | any) {
+postSchema.pre('save', function (this: any) {
   if (this.isModified('title')) {
     this.slug = slugify(this.title, { lower: true, strict: true });
   }
-  next();
 });
 
 export const Post = mongoose.model<IPost>('Post', postSchema);
