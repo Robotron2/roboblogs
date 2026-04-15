@@ -39,6 +39,11 @@ app.use(cookieParser());
 // Global rate limiter
 app.use(globalLimiter);
 
+// Home / health check route
+app.get('/', (req, res) => {
+  res.status(200).json({ success: true, message: 'RoboBlogs API is actively running!' });
+});
+
 // API routes
 app.use('/api/v1', routes);
 
