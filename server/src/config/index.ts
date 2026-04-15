@@ -15,7 +15,7 @@ const config = {
     accessExpiration: process.env.JWT_ACCESS_EXPIRY || '15m',
     refreshExpiration: process.env.JWT_REFRESH_EXPIRY || '7d',
   },
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:3000',
+  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
   email: {
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,

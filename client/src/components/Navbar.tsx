@@ -2,10 +2,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { Search, Moon, Sun, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Button from './Button';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
   const location = useLocation();
+  const { isAuthenticated, isAdmin, user } = useAuth();
 
   useEffect(() => {
     const isDarkMode = localStorage.getItem('theme') === 'dark' || 
@@ -29,14 +31,11 @@ export default function Navbar() {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Articles', path: '/articles' },
-    { name: 'About', path: '/about' },
   ];
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Left: Logo + Nav links */}
         <div className="flex items-center gap-8">
           <Link to="/" className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
             RoboBlogs
@@ -51,7 +50,7 @@ export default function Navbar() {
                   to={link.path} 
                   className={`pb-[17px] pt-[17px] border-b-2 transition-colors ${
                     isActive 
-                      ? 'border-primary-600 text-primary-600' 
+                      ? 'border-primary text-primary' 
                       : 'border-transparent text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'
                   }`}
                 >
@@ -62,7 +61,6 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Right: Search + Theme + Auth */}
         <div className="hidden md:flex items-center gap-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -80,15 +78,31 @@ export default function Navbar() {
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
 
-          <Link to="/login">
-            <Button variant="ghost" size="sm">Login</Button>
-          </Link>
-          <Link to="/register">
-            <Button size="sm">Register</Button>
-          </Link>
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              {isAdmin && (
+                <Link to="/admin">
+                  <Button variant="ghost" size="sm">Admin</Button>
+                </Link>
+              )}
+              <Link to="/profile" className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
+                  {user?.name.charAt(0).toUpperCase()}
+                </div>
+              </Link>
+            </div>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="ghost" size="sm">Login</Button>
+              </Link>
+              <Link to="/register">
+                <Button size="sm">Register</Button>
+              </Link>
+            </>
+          )}
         </div>
 
-        {/* Mobile menu button */}
         <button className="md:hidden p-2 text-gray-600 dark:text-gray-300">
           <Menu className="h-5 w-5" />
         </button>
