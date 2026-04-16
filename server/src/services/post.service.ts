@@ -118,11 +118,21 @@ export const getAllPosts = async (query: any, currentUserId?: string, isAdmin: b
     };
   }));
 
+  let globalViews = 0;
+  let totalSubscribers = 0;
+
+  if (isAdmin) {
+    const aggregateViews = await Post.aggregate([{ $group: { _id: null, totalViews: { $sum: '$views' } } }]);
+    globalViews = aggregateViews[0]?.totalViews || 0;
+    totalSubscribers = await Subscriber.countDocuments({ isActive: true });
+  }
+
   return {
     posts: enhancedPosts,
     total,
     page: Number(page),
     pages: Math.ceil(total / Number(limit)),
+    ...(isAdmin && { globalViews, totalSubscribers })
   };
 };
 

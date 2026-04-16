@@ -28,13 +28,13 @@ export const subscribe = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const unsubscribe = catchAsync(async (req: Request, res: Response) => {
-  const { token } = req.params;
+  const token = req.params.token as string;
   if (!token) {
     throw new ApiError(400, 'Invalid unsubscribe link');
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { email: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as unknown as { email: string };
     const subscriber = await Subscriber.findOne({ email: decoded.email });
 
     if (!subscriber) {

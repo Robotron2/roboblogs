@@ -17,15 +17,21 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [postToDelete, setPostToDelete] = useState<Post | null>(null);
+  
+  // Dashboard Metrics
+  const [globalViews, setGlobalViews] = useState<number | null>(null);
+  const [totalSubscribers, setTotalSubscribers] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
       setIsLoading(true);
       try {
         const res = await postsApi.getAll({ page, limit: 10 });
-        const data = res.data.data;
+        const data = res.data.data as any;
         setPosts(data.posts);
         setTotalPages(Math.max(1, Math.ceil((data.total || 0) / (data.limit || 10))));
+        if (data.globalViews !== undefined) setGlobalViews(data.globalViews);
+        if (data.totalSubscribers !== undefined) setTotalSubscribers(data.totalSubscribers);
       } catch {
         toast.error('Failed to load posts');
       } finally {
@@ -73,8 +79,9 @@ export default function Dashboard() {
         <Card>
           <CardContent>
             <p className="text-sm font-medium text-body mb-1">Total Views</p>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">--</p>
-            <span className="text-xs font-semibold text-success mt-2 block">Analytics coming soon</span>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white">
+              {globalViews !== null ? globalViews.toLocaleString() : '--'}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -86,8 +93,9 @@ export default function Dashboard() {
         <Card>
           <CardContent>
             <p className="text-sm font-medium text-body mb-1">Total Subscribers</p>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">--</p>
-            <span className="text-xs font-semibold text-body mt-2 block">Coming soon</span>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white">
+               {totalSubscribers !== null ? totalSubscribers.toLocaleString() : '--'}
+            </p>
           </CardContent>
         </Card>
       </div>
