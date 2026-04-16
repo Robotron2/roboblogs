@@ -9,6 +9,8 @@ export interface IPost extends Document {
   author: mongoose.Types.ObjectId;
   categories?: mongoose.Types.ObjectId[];
   isPublished: boolean;
+  views: number;
+  newsletterSent: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -47,6 +49,14 @@ const postSchema = new Schema<IPost>(
     isPublished: {
       type: Boolean,
       default: true,
+    },
+    views: {
+      type: Number,
+      default: 0,
+    },
+    newsletterSent: {
+      type: Boolean,
+      default: false,
     },
   },
   {

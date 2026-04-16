@@ -21,3 +21,14 @@ export const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+export const newsletterLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: {
+    success: false,
+    message: 'Too many newsletter subscription attempts from this IP, please try again after an hour',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});

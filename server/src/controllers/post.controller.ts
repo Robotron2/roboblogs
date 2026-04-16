@@ -33,7 +33,7 @@ export const getPosts = catchAsync(async (req: AuthRequest, res: Response) => {
 export const getPost = catchAsync(async (req: AuthRequest, res: Response) => {
   if (!req.params.slug) throw new ApiError(400, 'Post slug is required');
   const isAdmin = req.user?.role === 'admin';
-  const post = await postService.getPostBySlug(req.params.slug as string, req.user?._id, isAdmin);
+  const post = await postService.getPostBySlug(req.params.slug as string, req.user?._id, isAdmin, req.ip);
   res.status(200).json(new ApiResponse(true, 'Post retrieved successfully', post));
 });
 

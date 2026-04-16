@@ -120,6 +120,7 @@ Fetches a paginated list of published posts. Supports optional authentication co
             { "name": "Innovation", "slug": "innovation" }
           ],
           "author": { "name": "Admin", "email": "admin@roboblogs.com" },
+          "views": 25,
           "createdAt": "2026-04-16T..."
         }
       ],
@@ -164,7 +165,17 @@ Retrieves details for a specific post by its generated URL slug.
   }
   ```
 
-### 5. Delete Post
+### 5. Publish Post
+- **Method**: `PUT`
+- **Endpoint**: `/posts/:id/publish`
+- **Headers**: `Authorization: Bearer <accessToken>` (Admin Only)
+
+### 6. Unpublish Post
+- **Method**: `PUT`
+- **Endpoint**: `/posts/:id/unpublish`
+- **Headers**: `Authorization: Bearer <accessToken>` (Admin Only)
+
+### 7. Delete Post
 - **Method**: `DELETE`
 - **Endpoint**: `/posts/:id`
 - **Headers**: `Authorization: Bearer <accessToken>` (Admin Only)
@@ -258,6 +269,28 @@ Removes an existing like from a post.
 - **Method**: `DELETE`
 - **Endpoint**: `/likes/:postId/unlike`
 - **Headers**: `Authorization: Bearer <accessToken>`
+- **Response** `200 OK`
+
+---
+
+## Newsletter (`/newsletter`)
+
+### 1. Subscribe to Newsletter
+Adds an email safely into the mailing list. Triggers a `429` error if abused consecutively (max 5 per hour).
+
+- **Method**: `POST`
+- **Endpoint**: `/newsletter/subscribe`
+- **Body**:
+  ```json
+  { "email": "reader@example.com" }
+  ```
+- **Response** `201 Created` or `200 OK`
+
+### 2. Unsubscribe
+Removes active subscription dynamically via JSON web token identity decoding. Supports both GET (hyperlink clicks) and POST methods.
+
+- **Method**: `GET / POST`
+- **Endpoint**: `/newsletter/unsubscribe/:token`
 - **Response** `200 OK`
 
 ---

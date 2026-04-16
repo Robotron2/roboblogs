@@ -5,6 +5,7 @@ import postRoutes from './post.routes';
 import commentRoutes from './comment.routes';
 import likeRoutes from './like.routes';
 import categoryRoutes from './category.routes';
+import newsletterRoutes from './newsletter.routes';
 
 const router = express.Router();
 
@@ -14,5 +15,6 @@ router.use('/posts', postRoutes);
 router.use('/comments', commentRoutes);
 router.use('/likes', likeRoutes);
 router.use('/categories', categoryRoutes);
+router.use('/newsletter', newsletterRoutes);
 
 export default router;

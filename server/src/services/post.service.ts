@@ -2,8 +2,22 @@ import { Post, IPost } from '../models/post.model';
 import { Like } from '../models/like.model';
 import { Category } from '../models/category.model';
 import { Comment } from '../models/comment.model';
+import { Subscriber } from '../models/subscriber.model';
+import { sendBulkNewsletter } from './email.service';
 import ApiError from '../utils/ApiError';
 import mongoose from 'mongoose';
+
+const viewCache = new Map<string, number>();
+
+// Cleanup cache every 30 mins to remove entries older than 1 hour
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, timestamp] of viewCache.entries()) {
+    if (now - timestamp > 60 * 60 * 1000) {
+      viewCache.delete(key);
+    }
+  }
+}, 30 * 60 * 1000);
 
 const calculateReadTime = (content: string): number => {
   const plainText = content.replace(/<[^>]*>/g, '');
@@ -112,7 +126,7 @@ export const getAllPosts = async (query: any, currentUserId?: string, isAdmin: b
   };
 };
 
-export const getPostBySlug = async (slug: string, currentUserId?: string, isAdmin: boolean = false) => {
+export const getPostBySlug = async (slug: string, currentUserId?: string, isAdmin: boolean = false, ip?: string) => {
   const queryParts: any[] = [
     mongoose.isValidObjectId(slug) ? { _id: slug } : { slug }
   ];
@@ -137,6 +151,16 @@ export const getPostBySlug = async (slug: string, currentUserId?: string, isAdmi
   if (currentUserId) {
     const like = await Like.findOne({ post: post._id, user: currentUserId });
     isLiked = !!like;
+  }
+
+  // Analytics: Increment unique views
+  if (ip) {
+    const cacheKey = `${ip}_${post._id}`;
+    if (!viewCache.has(cacheKey)) {
+      viewCache.set(cacheKey, Date.now());
+      await Post.updateOne({ _id: post._id }, { $inc: { views: 1 } });
+      post.views = (post.views || 0) + 1;
+    }
   }
 
   return {
@@ -165,6 +189,20 @@ export const publishPost = async (postId: string) => {
   }
 
   post.isPublished = true;
+  
+  if (!post.newsletterSent) {
+    // Non-blocking newsletter dispatch
+    Subscriber.find({ isActive: true }).then(subscribers => {
+      if (subscribers.length > 0) {
+        sendBulkNewsletter(subscribers, post);
+      }
+    }).catch(err => {
+      console.error('Failed to fetch subscribers for newsletter:', err);
+    });
+    
+    post.newsletterSent = true;
+  }
+
   await post.save();
   return post;
 };

@@ -6,8 +6,9 @@ import Loader from '../../components/Loader';
 import EmptyState from '../../components/EmptyState';
 import { postsApi } from '../../api/posts.api';
 import { categoriesApi } from '../../api/categories.api';
+import { newsletterApi } from '../../api/newsletter.api';
 import type { Post as PostType, Category } from '../../types';
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 export default function Home() {
   const [posts, setPosts] = useState<PostType[]>([]);
@@ -19,6 +20,10 @@ export default function Home() {
   
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Newsletter state
+  const [email, setEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
 
   // Fetch Categories on mount
   useEffect(() => {
@@ -70,6 +75,25 @@ export default function Home() {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('page', p.toString());
     setSearchParams(newParams);
+  };
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !email.includes('@')) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+    
+    setIsSubscribing(true);
+    try {
+      const res = await newsletterApi.subscribe(email);
+      toast.success(res.data.message || 'Successfully subscribed!');
+      setEmail('');
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to subscribe');
+    } finally {
+      setIsSubscribing(false);
+    }
   };
 
   if (isLoading) return <div className="py-20"><Loader size="lg" /></div>;
@@ -250,13 +274,16 @@ export default function Home() {
         <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">Stay ahead of the curve.</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 max-w-md mx-auto">Get the week's most critical robotics news delivered to your inbox every Friday.</p>
         
-        <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
+        <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={handleSubscribe}>
           <input 
             type="email" 
             placeholder="Enter your email" 
-            className="flex-1 h-11 rounded-full border border-gray-200 bg-white px-5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-gray-700 dark:bg-gray-800 dark:text-white" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={isSubscribing}
+            className="flex-1 h-11 rounded-full border border-gray-200 bg-white px-5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-gray-700 dark:bg-gray-800 dark:text-white disabled:opacity-50" 
           />
-          <Button type="button" size="md" className="rounded-full px-8">Subscribe</Button>
+          <Button type="submit" size="md" className="rounded-full px-8" isLoading={isSubscribing}>Subscribe</Button>
         </form>
       </section>
     </div>
