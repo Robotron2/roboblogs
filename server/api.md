@@ -35,7 +35,7 @@ Authenticates an existing user.
   }
   ```
 - **Response** `200 OK`:
-  Returns an `accessToken`. Sets the `refreshToken` securely in a cookie.
+  Returns the `user` object and an `accessToken`. Sets the `refreshToken` securely in a cookie.
 
 ### 3. Logout User
 Clears the `refreshToken` cookie.
@@ -92,21 +92,37 @@ Retrieves the profile data of the currently authenticated user.
 > **Note:** Only users with `admin` roles can Create, Update, or Delete posts.
 
 ### 1. Get All Posts
-Fetches a paginated list of published posts.
+Fetches a paginated list of published posts. Supports optional authentication context for personalized metadata.
 
 - **Method**: `GET`
 - **Endpoint**: `/posts`
+- **Headers**: `Authorization: Bearer <accessToken>` (Optional)
 - **Query Parameters**:
   - `page` (default: 1)
   - `limit` (default: 10)
-  - `search` (optional keyword search)
+  - `search` (optional keyword search in title, content, or category name)
+  - `category` (optional, filter by category slug)
 - **Response** `200 OK`:
   ```json
   {
     "success": true,
     "message": "Posts retrieved successfully",
     "data": {
-      "posts": [...],
+      "posts": [
+        {
+          "_id": "64abcdef1234567890",
+          "title": "Robotics in 2026",
+          "slug": "robotics-in-2026",
+          "readTime": 5,
+          "likesCount": 12,
+          "isLiked": false,
+          "categories": [
+            { "name": "Innovation", "slug": "innovation" }
+          ],
+          "author": { "name": "Admin", "email": "admin@roboblogs.com" },
+          "createdAt": "2026-04-16T..."
+        }
+      ],
       "page": 1,
       "limit": 10,
       "total": 50
@@ -119,7 +135,8 @@ Retrieves details for a specific post by its generated URL slug.
 
 - **Method**: `GET`
 - **Endpoint**: `/posts/:slug`
-- **Response** `200 OK`: Returns the targeted `post` document.
+- **Headers**: `Authorization: Bearer <accessToken>` (Optional)
+- **Response** `200 OK`: Returns the targeted `post` document with dynamic metadata (`readTime`, `likesCount`, `isLiked`).
 
 ### 3. Create Post
 - **Method**: `POST`
@@ -130,7 +147,8 @@ Retrieves details for a specific post by its generated URL slug.
   {
     "title": "My Awesome Post",
     "content": "Full markdown or rich text content here.",
-    "coverImage": "url_to_image.jpg"
+    "coverImage": "url_to_image.jpg",
+    "categories": ["category_id_1", "category_id_2"]
   }
   ```
 
@@ -138,6 +156,13 @@ Retrieves details for a specific post by its generated URL slug.
 - **Method**: `PUT`
 - **Endpoint**: `/posts/:id`
 - **Headers**: `Authorization: Bearer <accessToken>` (Admin Only)
+- **Body**: (Partial updates supported)
+  ```json
+  {
+    "title": "Updated Title",
+    "categories": ["new_category_id"]
+  }
+  ```
 
 ### 5. Delete Post
 - **Method**: `DELETE`
@@ -146,10 +171,48 @@ Retrieves details for a specific post by its generated URL slug.
 
 ---
 
+## Categories (`/categories`)
+
+### 1. Get All Categories
+Fetches all available categories sorted alphabetically.
+
+- **Method**: `GET`
+- **Endpoint**: `/categories`
+- **Response** `200 OK`: 
+  ```json
+  {
+    "success": true,
+    "message": "Categories retrieved successfully",
+    "data": [
+      { "_id": "...", "name": "AI", "slug": "ai" },
+      { "_id": "...", "name": "Robotics", "slug": "robotics" }
+    ]
+  }
+  ```
+
+### 2. Create Category
+- **Method**: `POST`
+- **Endpoint**: `/categories`
+- **Headers**: `Authorization: Bearer <accessToken>` (Admin Only)
+- **Body**: `{ "name": "New Category" }`
+
+### 3. Update Category
+- **Method**: `PUT`
+- **Endpoint**: `/categories/:id`
+- **Headers**: `Authorization: Bearer <accessToken>` (Admin Only)
+- **Body**: `{ "name": "Updated Category" }`
+
+### 4. Delete Category
+- **Method**: `DELETE`
+- **Endpoint**: `/categories/:id`
+- **Headers**: `Authorization: Bearer <accessToken>` (Admin Only)
+
+---
+
 ## Comments (`/comments`)
 
 ### 1. Get Post Comments
-Fetches paginated comments belonging to a post.
+Fetches paginated comments belonging to a post. Includes populated user `name`.
 
 - **Method**: `GET`
 - **Endpoint**: `/comments/:postId`

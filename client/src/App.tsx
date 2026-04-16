@@ -18,8 +18,20 @@ import CreatePost from './pages/admin/CreatePost';
 import NotFound from './pages/public/NotFound';
 
 import { PrivateRoute, AdminRoute } from './components/RouteGuards';
+import { useAuth } from './context/AuthContext';
+import Loader from './components/Loader';
 
 function App() {
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-background-dark">
+        <Loader size="lg" />
+      </div>
+    );
+  }
+
   return (
     <Router>
       <Routes>

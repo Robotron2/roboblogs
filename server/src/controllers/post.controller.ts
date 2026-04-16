@@ -24,13 +24,13 @@ export const deletePost = catchAsync(async (req: Request, res: Response) => {
   res.status(200).json(new ApiResponse(true, 'Post deleted successfully', null));
 });
 
-export const getPosts = catchAsync(async (req: Request, res: Response) => {
-  const result = await postService.getAllPosts(req.query);
+export const getPosts = catchAsync(async (req: AuthRequest, res: Response) => {
+  const result = await postService.getAllPosts(req.query, req.user?._id);
   res.status(200).json(new ApiResponse(true, 'Posts retrieved successfully', result));
 });
 
-export const getPost = catchAsync(async (req: Request, res: Response) => {
+export const getPost = catchAsync(async (req: AuthRequest, res: Response) => {
   if (!req.params.slug) throw new ApiError(400, 'Post slug is required');
-  const post = await postService.getPostBySlug(req.params.slug as string);
+  const post = await postService.getPostBySlug(req.params.slug as string, req.user?._id);
   res.status(200).json(new ApiResponse(true, 'Post retrieved successfully', post));
 });

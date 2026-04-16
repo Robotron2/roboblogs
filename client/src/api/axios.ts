@@ -73,7 +73,8 @@ api.interceptors.response.use(
         processQueue(refreshError, null);
         // Clear auth header on refresh failure
         delete api.defaults.headers.common['Authorization'];
-        // Redirect to login will be handled by the AuthContext consumer
+        // Emit event for AuthProvider to handle global state cleanup
+        window.dispatchEvent(new Event('auth-failure'));
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
