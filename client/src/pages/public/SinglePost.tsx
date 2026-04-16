@@ -43,7 +43,9 @@ export default function SinglePost() {
         
         // Fetch comments
         const commentsRes = await commentsApi.getByPost(postData._id);
-        setComments(commentsRes.data.data);
+        const commentsData = commentsRes.data.data;
+        // The API returns an object { comments: [...], total: ... }
+        setComments(Array.isArray(commentsData) ? commentsData : (commentsData as any).comments || []);
 
         // Placeholder for like check (could be refined if API returns liked state)
         setLikeCount(Math.floor(Math.random() * 50)); 
