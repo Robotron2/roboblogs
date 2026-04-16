@@ -18,6 +18,11 @@ export const getComments = catchAsync(async (req: Request, res: Response) => {
   res.status(200).json(new ApiResponse(true, 'Comments retrieved successfully', result));
 });
 
+export const getGlobalComments = catchAsync(async (req: Request, res: Response) => {
+  const result = await commentService.getAllComments(req.query);
+  res.status(200).json(new ApiResponse(true, 'Global comments retrieved successfully', result));
+});
+
 export const deleteComment = catchAsync(async (req: AuthRequest, res: Response) => {
   if (!req.user) throw new ApiError(401, 'User not found');
   if (!req.params.id) throw new ApiError(400, 'Comment ID is required');

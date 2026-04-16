@@ -83,15 +83,21 @@ export default function CreatePost() {
       if (!id) return;
       try {
         const res = await postsApi.getBySlug(id);
-        const data = res.data.data;
+        const data = res.data?.data;
+        
+        if (!data) {
+          throw new Error('No data received');
+        }
+
         reset({
-          title: data.title,
-          content: data.content,
+          title: data.title || '',
+          content: data.content || '',
           coverImage: data.coverImage || '',
-          categories: data.categories.map((c: any) => typeof c === 'object' ? c._id : c),
+          categories: data.categories?.map((c: any) => typeof c === 'object' ? c._id : c) || [],
         });
         setCoverPreview(data.coverImage || null);
       } catch (err) {
+        console.error('Fetch post error:', err);
         toast.error('Failed to load article details');
       }
     };

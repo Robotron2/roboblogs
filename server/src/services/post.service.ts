@@ -100,7 +100,8 @@ export const getAllPosts = async (query: any, currentUserId?: string) => {
 };
 
 export const getPostBySlug = async (slug: string, currentUserId?: string) => {
-  const post = await Post.findOne({ slug })
+  const query = mongoose.isValidObjectId(slug) ? { _id: slug } : { slug };
+  const post = await Post.findOne(query)
     .populate('author', 'name email')
     .populate('categories', 'name slug')
     .lean();

@@ -6,6 +6,7 @@ import { validateComment } from '../validators/comment.validator';
 const router = express.Router();
 
 router.post('/', protect, validateComment, commentController.addComment);
+router.get('/all', protect, commentController.getGlobalComments);
 router.get('/:postId', commentController.getComments);
 router.delete('/:id', protect, commentController.deleteComment);
 

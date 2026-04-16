@@ -15,6 +15,9 @@ import ResetPassword from './pages/auth/ResetPassword';
 
 import Dashboard from './pages/admin/Dashboard';
 import CreatePost from './pages/admin/CreatePost';
+import Library from './pages/admin/Library';
+import Categories from './pages/admin/Categories';
+import Moderation from './pages/admin/Moderation';
 import NotFound from './pages/public/NotFound';
 
 import { PrivateRoute, AdminRoute } from './components/RouteGuards';
@@ -62,8 +65,11 @@ function App() {
         }>
           <Route index element={<Dashboard />} />
           <Route path="posts" element={<Dashboard />} />
+          <Route path="library" element={<Library />} />
           <Route path="posts/new" element={<CreatePost />} />
           <Route path="posts/:id/edit" element={<CreatePost />} />
+          <Route path="categories" element={<Categories />} />
+          <Route path="moderation" element={<Moderation />} />
         </Route>
 
         {/* Catch-all 404 */}

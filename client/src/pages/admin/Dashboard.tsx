@@ -5,6 +5,8 @@ import { Card, CardContent } from '../../components/Card';
 import Pagination from '../../components/Pagination';
 import Loader from '../../components/Loader';
 import EmptyState from '../../components/EmptyState';
+import Modal from '../../components/Modal';
+import Button from '../../components/Button';
 import { postsApi } from '../../api/posts.api';
 import type { Post } from '../../types';
 
@@ -13,6 +15,8 @@ export default function Dashboard() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<Post | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -31,14 +35,22 @@ export default function Dashboard() {
     fetchPosts();
   }, [page]);
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this article?')) return;
+  const confirmDelete = (post: Post) => {
+    setPostToDelete(post);
+  };
+
+  const handleDelete = async () => {
+    if (!postToDelete) return;
+    setIsDeleting(true);
     try {
-      await postsApi.delete(id);
+      await postsApi.delete(postToDelete._id);
       toast.success('Article deleted');
-      setPosts(posts.filter(p => p._id !== id));
+      setPosts(posts.filter(p => p._id !== postToDelete._id));
+      setPostToDelete(null);
     } catch {
       toast.error('Failed to delete article');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -128,10 +140,10 @@ export default function Dashboard() {
                       {new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </td>
                     <td className="px-6 py-4 text-right flex gap-3 justify-end">
-                      <Link to={`/admin/posts/${post._id}/edit`} className="text-primary hover:text-primary-700 font-bold transition-colors">Edit</Link>
+                      <Link to={`/admin/posts/${post._id}/edit`} className="text-primary hover:text-primary-700 font-bold transition-colors text-xs uppercase tracking-wider">Edit</Link>
                       <button 
-                        onClick={() => handleDelete(post._id)}
-                        className="text-error hover:text-red-700 font-bold transition-colors"
+                         onClick={() => confirmDelete(post)}
+                         className="text-error hover:text-red-700 font-bold transition-colors text-xs uppercase tracking-wider"
                       >
                         Delete
                       </button>
@@ -145,6 +157,43 @@ export default function Dashboard() {
       </div>
 
       <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={!!postToDelete}
+        onClose={() => setPostToDelete(null)}
+        title="Delete Article"
+        width="sm"
+      >
+        <div className="text-center">
+          <div className="w-16 h-16 bg-red-50 dark:bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-error">
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <p className="text-gray-900 dark:text-white font-bold mb-2">Are you absolutely sure?</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+            This will permanently delete <span className="font-semibold text-gray-900 dark:text-gray-100">"{postToDelete?.title}"</span>. This action cannot be undone.
+          </p>
+          <div className="flex gap-3">
+            <Button 
+              variant="secondary" 
+              className="flex-1 rounded-full" 
+              onClick={() => setPostToDelete(null)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="danger" 
+              className="flex-1 rounded-full" 
+              onClick={handleDelete}
+              isLoading={isDeleting}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

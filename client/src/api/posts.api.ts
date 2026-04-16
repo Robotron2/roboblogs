@@ -1,5 +1,5 @@
 import api from './axios';
-import type { ApiResponse, Post, PaginatedResponse } from '../types';
+import type { ApiResponse, Post, PostPaginatedResponse } from '../types';
 
 interface CreatePostData {
   title: string;
@@ -10,7 +10,7 @@ interface CreatePostData {
 
 export const postsApi = {
   getAll: (params?: { page?: number; limit?: number; search?: string; category?: string }) =>
-    api.get<ApiResponse<PaginatedResponse<Post>>>('/posts', { params }),
+    api.get<ApiResponse<PostPaginatedResponse>>('/posts', { params }),
 
   getBySlug: (slug: string) =>
     api.get<ApiResponse<Post>>(`/posts/${slug}`),

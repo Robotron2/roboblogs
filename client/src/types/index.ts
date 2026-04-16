@@ -50,9 +50,18 @@ export interface ApiResponse<T = unknown> {
   data: T;
 }
 
-export interface PaginatedResponse<T> {
-  posts: T[];
+export interface PostPaginatedResponse {
+  posts: Post[];
   page: number;
   limit: number;
   total: number;
+  pages: number;
+}
+
+export interface CommentPaginatedResponse {
+  comments: Comment[];
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
 }
