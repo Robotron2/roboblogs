@@ -11,6 +11,7 @@ import { uploadImage } from '../../utils/cloudinary';
 import { useDraft } from '../../hooks/useDraft';
 import type { CreatePostFormData } from '../../utils/schemas';
 import type { Category } from '../../types';
+import { useEffect, useRef, useState } from 'react'
 
 export default function CreatePost() {
   const { id } = useParams<{ id: string }>();

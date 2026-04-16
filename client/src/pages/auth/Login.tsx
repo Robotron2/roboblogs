@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +13,7 @@ import type { LoginFormData } from '../../utils/schemas';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   const {
@@ -30,7 +31,9 @@ export default function Login() {
       setAuthToken(accessToken);
       login(user, accessToken);
       toast.success('Welcome back!');
-      navigate(user.role === 'admin' ? '/admin' : '/');
+      
+      const destination = location.state?.from?.pathname || (user.role === 'admin' ? '/admin' : '/');
+      navigate(destination, { replace: true });
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
       toast.error(error.response?.data?.message || 'Login failed');

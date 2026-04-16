@@ -4,6 +4,7 @@ export interface Draft {
   title: string;
   content: string;
   coverImage: string;
+  categories: string[];
   lastSaved: number;
 }
 

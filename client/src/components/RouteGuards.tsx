@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Loader from './Loader';
 import type { ReactNode } from 'react';
@@ -13,6 +13,7 @@ interface AdminRouteProps {
 
 export function PrivateRoute({ children }: PrivateRouteProps) {
   const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -23,7 +24,7 @@ export function PrivateRoute({ children }: PrivateRouteProps) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
@@ -31,6 +32,7 @@ export function PrivateRoute({ children }: PrivateRouteProps) {
 
 export function AdminRoute({ children }: AdminRouteProps) {
   const { isAuthenticated, isAdmin, isLoading } = useAuth();
+  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -41,7 +43,7 @@ export function AdminRoute({ children }: AdminRouteProps) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
   if (!isAdmin) {

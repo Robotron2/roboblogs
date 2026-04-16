@@ -3,8 +3,8 @@ import type { ApiResponse, Like } from '../types';
 
 export const likesApi = {
   like: (postId: string) =>
-    api.post<ApiResponse<Like>>(`/likes/${postId}/like`),
+    api.post<ApiResponse<Like>>(`/likes/${postId}`),
 
   unlike: (postId: string) =>
-    api.delete<ApiResponse<null>>(`/likes/${postId}/unlike`),
+    api.delete<ApiResponse<null>>(`/likes/${postId}`),
 };
