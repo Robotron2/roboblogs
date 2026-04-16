@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Heart, MessageSquare, ArrowLeft } from 'lucide-react';
+import { Heart, MessageSquare, ArrowLeft, Link as LinkIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
@@ -100,6 +100,11 @@ export default function SinglePost() {
     }
   };
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success('Link copied to clipboard!');
+  };
+
   if (isLoading) return <div className="py-20"><Loader size="lg" /></div>;
   if (!post) return (
     <div className="py-20 text-center">
@@ -153,6 +158,13 @@ export default function SinglePost() {
           </div>
 
           <div className="flex items-center gap-3">
+            <button 
+              onClick={handleCopyLink}
+              className="flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full transition-all text-gray-500 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              title="Copy Link"
+            >
+              <LinkIcon className="w-4 h-4" /> Share
+            </button>
             <button 
               onClick={handleLike}
               className={`flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full transition-all ${

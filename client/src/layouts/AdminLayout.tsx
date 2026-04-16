@@ -82,66 +82,76 @@ export default function AdminLayout() {
       </nav>
 
       {/* Mobile Drawer Overlay */}
-      {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[60] flex lg:hidden">
-          <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
-            onClick={() => setIsMobileMenuOpen(false)}
-          ></div>
-          
-          <div className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white dark:bg-background-dark pb-12 shadow-xl transition-transform h-full">
-            <div className="flex px-4 pb-2 pt-5 justify-between items-center border-b border-gray-100 dark:border-gray-800">
-              <Link to="/" className="text-xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white text-lg">R</div>
-                RoboBlogs
-              </Link>
-              <button 
-                type="button" 
-                className="-m-2 p-2 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300" 
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <X className="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
+      <div 
+        className={`fixed inset-0 z-[60] lg:hidden transition-all duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
+        }`}
+      >
+        {/* Backdrop */}
+        <div 
+          className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out ${
+            isMobileMenuOpen ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+        
+        {/* Sliding Panel */}
+        <div 
+          className={`relative flex w-full max-w-xs flex-col overflow-y-auto bg-white dark:bg-background-dark pb-12 shadow-xl h-full transition-transform duration-300 ease-in-out ${
+            isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          <div className="flex px-4 pb-2 pt-5 justify-between items-center border-b border-gray-100 dark:border-gray-800">
+            <Link to="/" className="text-xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white text-lg">R</div>
+              RoboBlogs
+            </Link>
+            <button 
+              type="button" 
+              className="-m-2 p-2 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300" 
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <X className="h-6 w-6" aria-hidden="true" />
+            </button>
+          </div>
 
-            <div className="space-y-1 px-4 py-6">
-              {navItems.map((item) => {
-                const isActive = location.pathname === item.path;
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={`block px-4 py-3 rounded-xl transition-all flex items-center gap-3 ${
-                      isActive 
-                        ? 'bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400 font-medium' 
-                        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
-            
-            <div className="mt-auto border-t border-gray-100 dark:border-gray-800 p-4">
-              <button 
-                onClick={() => {
-                  setIsMobileMenuOpen(false);
-                  logout();
-                  navigate('/login');
-                }}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors font-medium"
-              >
-                <LogOut className="w-5 h-5" />
-                Logout
-              </button>
-            </div>
+          <div className="space-y-1 px-4 py-6">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`block px-4 py-3 rounded-xl transition-all flex items-center gap-3 ${
+                    isActive 
+                      ? 'bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400 font-medium' 
+                      : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                  }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  {item.name}
+                </Link>
+              );
+            })}
+          </div>
+          
+          <div className="mt-auto border-t border-gray-100 dark:border-gray-800 p-4">
+            <button 
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                logout();
+                navigate('/login');
+              }}
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors font-medium"
+            >
+              <LogOut className="w-5 h-5" />
+              Logout
+            </button>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Main Workspace */}
       <main className="flex-1 w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
