@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Heart, Share2, Bookmark, MessageSquare, ArrowLeft } from 'lucide-react';
+import { Heart, MessageSquare, ArrowLeft } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
@@ -40,15 +40,13 @@ export default function SinglePost() {
         const postRes = await postsApi.getBySlug(slug);
         const postData = postRes.data.data;
         setPost(postData);
+        setIsLiked(postData.isLiked);
+        setLikeCount(postData.likesCount);
         
         // Fetch comments
         const commentsRes = await commentsApi.getByPost(postData._id);
         const commentsData = commentsRes.data.data;
-        // The API returns an object { comments: [...], total: ... }
         setComments(Array.isArray(commentsData) ? commentsData : (commentsData as any).comments || []);
-
-        // Placeholder for like check (could be refined if API returns liked state)
-        setLikeCount(Math.floor(Math.random() * 50)); 
       } catch (err: any) {
         if (err.response?.status === 404) {
           toast.error('Article not found');
@@ -81,16 +79,23 @@ export default function SinglePost() {
     }
     if (!post) return;
 
+    // Optimistic Update
+    const previousIsLiked = isLiked;
+    const previousLikeCount = likeCount;
+    
+    setIsLiked(!previousIsLiked);
+    setLikeCount(prev => previousIsLiked ? prev - 1 : prev + 1);
+
     try {
-      if (isLiked) {
+      if (previousIsLiked) {
         await likesApi.unlike(post._id);
-        setLikeCount(prev => prev - 1);
       } else {
         await likesApi.like(post._id);
-        setLikeCount(prev => prev + 1);
       }
-      setIsLiked(!isLiked);
     } catch {
+      // Revert on failure
+      setIsLiked(previousIsLiked);
+      setLikeCount(previousLikeCount);
       toast.error('Failed to update like status');
     }
   };
@@ -113,12 +118,20 @@ export default function SinglePost() {
       </Link>
 
       <header className="mb-8">
-        <div className="flex items-center gap-2 mb-6">
-          <span className="text-[10px] font-bold tracking-widest text-primary uppercase bg-primary-50 dark:bg-primary-900/20 px-2.5 py-1 rounded">
-            INNOVATION
-          </span>
+        <div className="flex flex-wrap items-center gap-2 mb-6">
+          {post.categories?.length > 0 ? (
+            post.categories.map(cat => (
+              <span key={cat._id} className="text-[10px] font-bold tracking-widest text-primary uppercase bg-primary-50 dark:bg-primary-900/20 px-2.5 py-1 rounded">
+                {cat.name}
+              </span>
+            ))
+          ) : (
+            <span className="text-[10px] font-bold tracking-widest text-gray-400 uppercase bg-gray-100 dark:bg-gray-800 px-2.5 py-1 rounded">
+              UNTAGGED
+            </span>
+          )}
           <span className="text-[10px] font-medium text-gray-400 tracking-wider uppercase">
-            8 min read
+            {post.readTime} min read
           </span>
         </div>
         
@@ -139,7 +152,7 @@ export default function SinglePost() {
             </div>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-3">
             <button 
               onClick={handleLike}
               className={`flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full transition-all ${
@@ -149,12 +162,6 @@ export default function SinglePost() {
               }`}
             >
               <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} /> {likeCount}
-            </button>
-            <button className="p-2.5 text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
-              <Share2 className="w-4.5 h-4.5" />
-            </button>
-            <button className="p-2.5 text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
-              <Bookmark className="w-4.5 h-4.5" />
             </button>
           </div>
         </div>
@@ -227,7 +234,7 @@ export default function SinglePost() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-sm font-bold text-gray-900 dark:text-white">{commenter?.name || 'User'}</span>
+                    <span className="text-sm font-bold text-gray-900 dark:text-white">{commenter?.name || 'Anonymous'}</span>
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                       {new Date(comment.createdAt).toLocaleDateString()}
                     </span>

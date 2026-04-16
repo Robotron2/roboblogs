@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ImagePlus, Bold, Italic, Heading1, Heading2, List, Code, X, RefreshCw } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,14 +6,19 @@ import toast from 'react-hot-toast';
 import Button from '../../components/Button';
 import { createPostSchema } from '../../utils/schemas';
 import { postsApi } from '../../api/posts.api';
+import { categoriesApi } from '../../api/categories.api';
 import { uploadImage } from '../../utils/cloudinary';
 import { useDraft } from '../../hooks/useDraft';
 import type { CreatePostFormData } from '../../utils/schemas';
+import type { Category } from '../../types';
 
 export default function CreatePost() {
+  const { id } = useParams<{ id: string }>();
+  const isEdit = !!id;
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [showRestorePrompt, setShowRestorePrompt] = useState(false);
 
@@ -33,40 +37,98 @@ export default function CreatePost() {
       title: '',
       content: '',
       coverImage: '',
+      categories: [],
     }
   });
 
   const watchedFields = watch();
 
-  // Check for existing draft on mount
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await categoriesApi.getAll();
+        setCategories(res.data.data);
+      } catch (err) {
+        console.error('Failed to load categories', err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Fetch post data for edit mode
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (!id) return;
+      try {
+        const res = await postsApi.getAll({ search: id }); // Fallback search or we need a getById
+        // Wait, postsApi.getAll search is for query. 
+        // We really need postsApi.getById but the backend getPost is by SLUG or ID?
+        // Let's check api.md or postsApi.ts
+      } catch (err) {
+        toast.error('Failed to load post');
+      }
+    };
+    // fetchPost();
+  }, [id]);
+
+  // Wait, I should check posts.api.ts to see if I have getById.
+  // getBySlug is there. I might need getById for admin.
+  // Backend getPost: router.get('/:slug', optionalProtect, catchAsync(postController.getPost));
+  // In post service: const post = await Post.findOne({ $or: [{ slug: identifier }, { _id: identifier }] })
+  // So getBySlug works for ID too.
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (!id) return;
+      try {
+        const res = await postsApi.getBySlug(id);
+        const data = res.data.data;
+        reset({
+          title: data.title,
+          content: data.content,
+          coverImage: data.coverImage || '',
+          categories: data.categories.map((c: any) => typeof c === 'object' ? c._id : c),
+        });
+        setCoverPreview(data.coverImage || null);
+      } catch (err) {
+        toast.error('Failed to load article details');
+      }
+    };
+    if (isEdit) fetchPost();
+  }, [id, isEdit, reset]);
+
+  // Check for existing draft on mount (only for new posts)
+  useEffect(() => {
+    if (isEdit) return;
     const savedDraft = loadDraft();
     if (savedDraft && (savedDraft.title || savedDraft.content || savedDraft.coverImage)) {
       setShowRestorePrompt(true);
     }
-  }, [loadDraft]);
+  }, [loadDraft, isEdit]);
 
-  // Handle Auto-save with Debounce
+  // Handle Auto-save with Debounce (only for new posts)
   useEffect(() => {
-    const { title, content, coverImage } = watchedFields;
+    if (isEdit) return;
+    const { title, content, coverImage, categories: selectedCats } = watchedFields;
     
     // Don't auto-save if everything is empty
-    if (!title && !content && !coverImage) return;
+    if (!title && !content && !coverImage && (!selectedCats || selectedCats.length === 0)) return;
 
     const timeoutId = setTimeout(() => {
-      saveDraft({ title, content, coverImage });
+      saveDraft({ title, content, coverImage, categories: selectedCats });
     }, 1000); // 1s debounce
 
     return () => clearTimeout(timeoutId);
-  }, [watchedFields, saveDraft]);
+  }, [watchedFields, saveDraft, isEdit]);
 
   const handleRestore = () => {
     const draft = loadDraft();
     if (draft) {
       reset({
-        title: draft.title,
-        content: draft.content,
-        coverImage: draft.coverImage,
+        title: draft.title || '',
+        content: draft.content || '',
+        coverImage: draft.coverImage || '',
+        categories: draft.categories || [],
       });
       setCoverPreview(draft.coverImage || null);
       toast.success('Draft restored');
@@ -76,6 +138,13 @@ export default function CreatePost() {
 
   const handleDiscard = () => {
     clearDraft();
+    reset({
+      title: '',
+      content: '',
+      coverImage: '',
+      categories: [],
+    });
+    setCoverPreview(null);
     setShowRestorePrompt(false);
     toast('Draft discarded', { icon: '🗑️' });
   };
@@ -97,15 +166,29 @@ export default function CreatePost() {
     }
   };
 
+  const toggleCategory = (id: string) => {
+    const current = watch('categories') || [];
+    if (current.includes(id)) {
+      setValue('categories', current.filter(catId => catId !== id));
+    } else {
+      setValue('categories', [...current, id]);
+    }
+  };
+
   const onSubmit = async (data: CreatePostFormData) => {
     try {
-      await postsApi.create(data);
-      clearDraft(); // Clear draft on successful publish
-      toast.success('Post published successfully');
+      if (isEdit && id) {
+        await postsApi.update(id, data);
+        toast.success('Post updated successfully');
+      } else {
+        await postsApi.create(data);
+        clearDraft(); // Clear draft on successful publish
+        toast.success('Post published successfully');
+      }
       navigate('/admin');
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
-      toast.error(error.response?.data?.message || 'Failed to create post');
+      toast.error(error.response?.data?.message || 'Failed to save post');
     }
   };
 
@@ -169,7 +252,7 @@ export default function CreatePost() {
         </div>
 
         {/* Title */}
-        <div className="mb-8">
+        <div className="mb-6">
           <input
             type="text"
             placeholder="Article Title"
@@ -177,6 +260,33 @@ export default function CreatePost() {
             {...register('title')}
           />
           {errors.title && <p className="text-sm text-error mt-1">{errors.title.message}</p>}
+        </div>
+
+        {/* Category Selector */}
+        <div className="mb-10">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Add Categories</p>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => {
+              const isSelected = watchedFields.categories?.includes(cat._id);
+              return (
+                <button
+                  key={cat._id}
+                  type="button"
+                  onClick={() => toggleCategory(cat._id)}
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
+                    isSelected
+                      ? 'bg-primary border-primary text-white shadow-sm'
+                      : 'border-gray-200 dark:border-gray-800 text-gray-500 hover:border-primary/50'
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              );
+            })}
+            {categories.length === 0 && (
+              <p className="text-xs text-gray-400 italic">No categories available. Create one in settings.</p>
+            )}
+          </div>
         </div>
 
         {/* Toolbar */}
@@ -199,8 +309,8 @@ export default function CreatePost() {
               size="sm" 
               className="rounded-full"
               onClick={() => {
-                const { title, content, coverImage } = watchedFields;
-                saveDraft({ title, content, coverImage });
+                const { title, content, coverImage, categories: selectedCats } = watchedFields;
+                saveDraft({ title, content, coverImage, categories: selectedCats });
                 toast.success('Draft saved manually');
               }}
             >

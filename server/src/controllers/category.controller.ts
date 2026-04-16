@@ -21,13 +21,13 @@ export const updateCategory = catchAsync(async (req: Request, res: Response) => 
   const { name } = req.body;
   if (!id) throw new ApiError(400, 'Category ID is required');
   if (!name) throw new ApiError(400, 'Name is required');
-  const category = await categoryService.updateCategory(id, name);
+  const category = await categoryService.updateCategory(id as string, name);
   res.status(200).json(new ApiResponse(true, 'Category updated successfully', category));
 });
 
 export const deleteCategory = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   if (!id) throw new ApiError(400, 'Category ID is required');
-  await categoryService.deleteCategory(id);
+  await categoryService.deleteCategory(id as string);
   res.status(200).json(new ApiResponse(true, 'Category deleted successfully', null));
 });

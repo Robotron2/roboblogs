@@ -103,10 +103,11 @@ export default function Dashboard() {
             <table className="w-full text-sm text-left">
               <thead className="bg-gray-50 dark:bg-gray-800/50 text-xs font-semibold text-gray-500 uppercase">
                 <tr>
-                  <th className="px-6 py-4">Title</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4">Date</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                   <th className="px-6 py-4">Title</th>
+                   <th className="px-6 py-4">Status</th>
+                   <th className="px-6 py-4 text-center">Likes</th>
+                   <th className="px-6 py-4">Date</th>
+                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -119,6 +120,9 @@ export default function Dashboard() {
                       <span className="px-2 py-1 bg-green-50 dark:bg-green-500/10 text-success text-xs font-semibold rounded-full">
                         Published
                       </span>
+                    </td>
+                    <td className="px-6 py-4 text-center font-bold text-primary">
+                      {post.likesCount}
                     </td>
                     <td className="px-6 py-4 text-body">
                       {new Date(post.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}

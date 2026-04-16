@@ -7,6 +7,12 @@ export interface User {
   updatedAt: string;
 }
 
+export interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
 export interface Post {
   _id: string;
   title: string;
@@ -14,6 +20,10 @@ export interface Post {
   content: string;
   coverImage?: string;
   author: User | string;
+  categories: Category[];
+  readTime: number;
+  likesCount: number;
+  isLiked: boolean;
   createdAt: string;
   updatedAt: string;
 }

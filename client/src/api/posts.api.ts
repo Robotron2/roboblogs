@@ -5,10 +5,11 @@ interface CreatePostData {
   title: string;
   content: string;
   coverImage?: string;
+  categories?: string[];
 }
 
 export const postsApi = {
-  getAll: (params?: { page?: number; limit?: number; search?: string }) =>
+  getAll: (params?: { page?: number; limit?: number; search?: string; category?: string }) =>
     api.get<ApiResponse<PaginatedResponse<Post>>>('/posts', { params }),
 
   getBySlug: (slug: string) =>

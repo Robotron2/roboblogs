@@ -3,11 +3,35 @@ import { Search, Moon, Sun, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Button from './Button';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function Navbar() {
   const [isDark, setIsDark] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+  const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, isAdmin, user } = useAuth();
+
+  // Handle Search Debounce
+  useEffect(() => {
+    if (location.pathname !== '/' && !searchQuery) return;
+    
+    const timeoutId = setTimeout(() => {
+      if (searchQuery) {
+        navigate(`/?search=${encodeURIComponent(searchQuery)}`);
+      } else if (location.pathname === '/' && searchParams.get('search')) {
+        navigate('/');
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, navigate, location.pathname]);
+
+  // Sync search input with URL params
+  useEffect(() => {
+    setSearchQuery(searchParams.get('search') || '');
+  }, [searchParams]);
 
   useEffect(() => {
     const isDarkMode = localStorage.getItem('theme') === 'dark' || 
@@ -67,6 +91,8 @@ export default function Navbar() {
             <input 
               type="text" 
               placeholder="Search articles..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="h-9 w-56 rounded-full border border-gray-300 bg-white pl-9 pr-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
             />
           </div>
