@@ -8,6 +8,7 @@ export interface IPost extends Document {
   coverImage?: string;
   author: mongoose.Types.ObjectId;
   categories?: mongoose.Types.ObjectId[];
+  isPublished: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -43,6 +44,10 @@ const postSchema = new Schema<IPost>(
         ref: 'Category',
       },
     ],
+    isPublished: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: true,

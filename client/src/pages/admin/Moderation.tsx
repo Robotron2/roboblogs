@@ -24,7 +24,7 @@ export default function Moderation() {
       const res = await commentsApi.getAll({ page, limit: 15 });
       const data = res.data.data;
       setComments(data.comments);
-      setTotalPages(Math.ceil(data.total / data.limit));
+      setTotalPages(Math.max(1, Math.ceil((data.total || 0) / (data.limit || 15))));
     } catch {
       toast.error('Failed to load comments');
     } finally {

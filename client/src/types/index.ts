@@ -17,6 +17,7 @@ export interface Post {
   _id: string;
   title: string;
   slug: string;
+  isPublished: boolean;
   content: string;
   coverImage?: string;
   author: User | string;

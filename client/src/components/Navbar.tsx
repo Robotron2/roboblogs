@@ -3,10 +3,11 @@ import { Search, Moon, Sun, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Button from './Button';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function Navbar() {
-  const [isDark, setIsDark] = useState(false);
+  const { isDark, toggleTheme } = useTheme();
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const navigate = useNavigate();
@@ -33,25 +34,8 @@ export default function Navbar() {
     setSearchQuery(searchParams.get('search') || '');
   }, [searchParams]);
 
-  useEffect(() => {
-    const isDarkMode = localStorage.getItem('theme') === 'dark' || 
-      (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    
-    setIsDark(isDarkMode);
-    if (isDarkMode) document.documentElement.classList.add('dark');
-  }, []);
+  // Theme toggle logic moved to ThemeContext
 
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    if (newTheme) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
 
   const navLinks = [
     { name: 'Home', path: '/' },

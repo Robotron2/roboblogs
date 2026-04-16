@@ -23,4 +23,10 @@ export const postsApi = {
 
   delete: (id: string) =>
     api.delete<ApiResponse<null>>(`/posts/${id}`),
+
+  unpublish: (id: string) =>
+    api.put<ApiResponse<Post>>(`/posts/${id}/unpublish`),
+
+  publish: (id: string) =>
+    api.put<ApiResponse<Post>>(`/posts/${id}/publish`),
 };

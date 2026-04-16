@@ -11,6 +11,8 @@ router.get('/:slug', optionalProtect, postController.getPost);
 
 router.post('/', protect, restrictTo('admin'), validatePost, postController.createPost);
 router.put('/:id', protect, restrictTo('admin'), validatePost, postController.updatePost);
+router.put('/:id/unpublish', protect, restrictTo('admin'), postController.unpublishPost);
+router.put('/:id/publish', protect, restrictTo('admin'), postController.publishPost);
 router.delete('/:id', protect, restrictTo('admin'), postController.deletePost);
 
 export default router;

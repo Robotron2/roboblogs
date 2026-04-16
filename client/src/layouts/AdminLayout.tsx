@@ -1,11 +1,13 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Book, PenTool, Tag, MessageSquare, LogOut } from 'lucide-react';
+import { LayoutDashboard, Book, PenTool, Tag, MessageSquare, LogOut, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
 
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const navItems = [
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
@@ -68,9 +70,78 @@ export default function AdminLayout() {
             <div className="h-9 w-9 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-sm">
               <img src={`https://ui-avatars.com/api/?name=${user?.name}&background=random`} alt="Admin avatar" className="w-full h-full object-cover" />
             </div>
+
+            <button 
+              className="lg:hidden p-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
+              <Menu className="w-5 h-5" />
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* Mobile Drawer Overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-[60] flex lg:hidden">
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" 
+            onClick={() => setIsMobileMenuOpen(false)}
+          ></div>
+          
+          <div className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white dark:bg-background-dark pb-12 shadow-xl transition-transform h-full">
+            <div className="flex px-4 pb-2 pt-5 justify-between items-center border-b border-gray-100 dark:border-gray-800">
+              <Link to="/" className="text-xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white text-lg">R</div>
+                RoboBlogs
+              </Link>
+              <button 
+                type="button" 
+                className="-m-2 p-2 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300" 
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <X className="h-6 w-6" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="space-y-1 px-4 py-6">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.path;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`block px-4 py-3 rounded-xl transition-all flex items-center gap-3 ${
+                      isActive 
+                        ? 'bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400 font-medium' 
+                        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    {item.name}
+                  </Link>
+                );
+              })}
+            </div>
+            
+            <div className="mt-auto border-t border-gray-100 dark:border-gray-800 p-4">
+              <button 
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  logout();
+                  navigate('/login');
+                }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors font-medium"
+              >
+                <LogOut className="w-5 h-5" />
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Workspace */}
       <main className="flex-1 w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
@@ -88,7 +159,6 @@ export default function AdminLayout() {
             <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Service</a>
             <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">Contact</a>
-            <a href="#" className="hover:text-gray-900 dark:hover:text-white transition-colors">RSS Feed</a>
           </div>
           <p>&copy; {new Date().getFullYear()} RoboBlogs. All rights reserved.</p>
         </div>

@@ -1,6 +1,7 @@
 import { Post, IPost } from '../models/post.model';
 import { Like } from '../models/like.model';
 import { Category } from '../models/category.model';
+import { Comment } from '../models/comment.model';
 import ApiError from '../utils/ApiError';
 import mongoose from 'mongoose';
 
@@ -31,13 +32,25 @@ export const deletePost = async (postId: string) => {
   if (!post) {
     throw new ApiError(404, 'Post not found');
   }
+
+  // 1. Cascade Delete: Remove associated likes and comments
+  await Promise.all([
+    Like.deleteMany({ post: postId }),
+    Comment.deleteMany({ post: postId })
+  ]);
+
+  // 2. Delete the post itself
   await post.deleteOne();
 };
 
-export const getAllPosts = async (query: any, currentUserId?: string) => {
+export const getAllPosts = async (query: any, currentUserId?: string, isAdmin: boolean = false) => {
   const { page = 1, limit = 10, search = '', category = '' } = query;
   
   const filter: any = {};
+
+  if (!isAdmin) {
+    filter.isPublished = true;
+  }
 
   // 1. Category Filtering by Slug
   if (category) {
@@ -99,9 +112,18 @@ export const getAllPosts = async (query: any, currentUserId?: string) => {
   };
 };
 
-export const getPostBySlug = async (slug: string, currentUserId?: string) => {
-  const query = mongoose.isValidObjectId(slug) ? { _id: slug } : { slug };
-  const post = await Post.findOne(query)
+export const getPostBySlug = async (slug: string, currentUserId?: string, isAdmin: boolean = false) => {
+  const queryParts: any[] = [
+    mongoose.isValidObjectId(slug) ? { _id: slug } : { slug }
+  ];
+  
+  const postQuery = Post.findOne({ $or: queryParts });
+
+  if (!isAdmin) {
+    postQuery.where({ isPublished: true });
+  }
+
+  const post = await postQuery
     .populate('author', 'name email')
     .populate('categories', 'name slug')
     .lean();
@@ -123,4 +145,26 @@ export const getPostBySlug = async (slug: string, currentUserId?: string) => {
     likesCount,
     isLiked
   };
+};
+
+export const unpublishPost = async (postId: string) => {
+  const post = await Post.findById(postId);
+  if (!post) {
+    throw new ApiError(404, 'Post not found');
+  }
+
+  post.isPublished = false;
+  await post.save();
+  return post;
+};
+
+export const publishPost = async (postId: string) => {
+  const post = await Post.findById(postId);
+  if (!post) {
+    throw new ApiError(404, 'Post not found');
+  }
+
+  post.isPublished = true;
+  await post.save();
+  return post;
 };

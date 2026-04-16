@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, MoreVertical, Edit2, Trash2, Eye } from 'lucide-react';
+import { Search, Filter, MoreVertical, Edit2, Trash2, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { postsApi } from '../../api/posts.api';
 import { categoriesApi } from '../../api/categories.api';
@@ -22,6 +22,12 @@ export default function Library() {
   
   const [postToDelete, setPostToDelete] = useState<Post | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  const [postToUnpublish, setPostToUnpublish] = useState<Post | null>(null);
+  const [isUnpublishing, setIsUnpublishing] = useState(false);
+  
+  const [postToPublish, setPostToPublish] = useState<Post | null>(null);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -47,7 +53,7 @@ export default function Library() {
         });
         const data = res.data.data;
         setPosts(data.posts);
-        setTotalPages(Math.ceil(data.total / data.limit));
+        setTotalPages(Math.max(1, Math.ceil((data.total || 0) / (data.limit || 15))));
       } catch {
         toast.error('Failed to load library');
       } finally {
@@ -71,6 +77,36 @@ export default function Library() {
       toast.error('Failed to delete article');
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleUnpublish = async () => {
+    if (!postToUnpublish) return;
+    setIsUnpublishing(true);
+    try {
+      await postsApi.unpublish(postToUnpublish._id);
+      toast.success('Article unpublished');
+      setPosts(posts.map(p => p._id === postToUnpublish._id ? { ...p, isPublished: false } : p));
+      setPostToUnpublish(null);
+    } catch {
+      toast.error('Failed to unpublish article');
+    } finally {
+      setIsUnpublishing(false);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!postToPublish) return;
+    setIsPublishing(true);
+    try {
+      await postsApi.publish(postToPublish._id);
+      toast.success('Article published');
+      setPosts(posts.map(p => p._id === postToPublish._id ? { ...p, isPublished: true } : p));
+      setPostToPublish(null);
+    } catch {
+      toast.error('Failed to publish article');
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -149,7 +185,11 @@ export default function Library() {
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="px-2 py-0.5 bg-green-50 dark:bg-green-500/10 text-[10px] font-bold text-success uppercase rounded-md tracking-wider">Published</span>
+                  {post.isPublished ? (
+                    <span className="px-2 py-0.5 bg-green-50 dark:bg-green-500/10 text-[10px] font-bold text-success uppercase rounded-md tracking-wider">Published</span>
+                  ) : (
+                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-[10px] font-bold text-gray-500 uppercase rounded-md tracking-wider">Unpublished</span>
+                  )}
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">• {post.readTime} min read</span>
                 </div>
                 <h3 className="text-base font-bold text-gray-900 dark:text-white truncate mb-1">{post.title}</h3>
@@ -170,9 +210,27 @@ export default function Library() {
                 <Link to={`/admin/posts/${post._id}/edit`} className="p-2 text-gray-400 hover:text-primary transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg">
                   <Edit2 className="w-4 h-4" />
                 </Link>
+                {post.isPublished ? (
+                  <button 
+                    onClick={() => setPostToUnpublish(post)}
+                    className="p-2 text-gray-400 hover:text-orange-500 transition-colors hover:bg-orange-50 dark:hover:bg-orange-500/10 rounded-lg"
+                    title="Unpublish"
+                  >
+                    <EyeOff className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => setPostToPublish(post)}
+                    className="p-2 text-gray-400 hover:text-green-500 transition-colors hover:bg-green-50 dark:hover:bg-green-500/10 rounded-lg"
+                    title="Publish"
+                  >
+                    <Eye className="w-4 h-4" />
+                  </button>
+                )}
                 <button 
                   onClick={() => setPostToDelete(post)}
-                  className="p-2 text-gray-400 hover:text-error transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg"
+                  className="p-2 text-gray-400 hover:text-error transition-colors hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg"
+                  title="Delete"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -204,6 +262,50 @@ export default function Library() {
           <div className="flex gap-3">
             <Button variant="secondary" className="flex-1 rounded-full" onClick={() => setPostToDelete(null)}>Cancel</Button>
             <Button variant="danger" className="flex-1 rounded-full" onClick={handleDelete} isLoading={isDeleting}>Delete</Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Unpublish Confirmation Modal */}
+      <Modal
+        isOpen={!!postToUnpublish}
+        onClose={() => setPostToUnpublish(null)}
+        title="Unpublish Article"
+        width="sm"
+      >
+        <div className="text-center">
+          <div className="w-16 h-16 bg-orange-50 dark:bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-orange-500">
+            <EyeOff className="w-8 h-8" />
+          </div>
+          <p className="text-gray-900 dark:text-white font-bold mb-2">Confirm Unpublish</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+            Are you sure you want to unpublish <span className="font-semibold text-gray-900 dark:text-gray-100">"{postToUnpublish?.title}"</span>? This will hide it from the public feed.
+          </p>
+          <div className="flex gap-3">
+            <Button variant="secondary" className="flex-1 rounded-full" onClick={() => setPostToUnpublish(null)}>Cancel</Button>
+            <Button className="flex-1 rounded-full bg-orange-500 text-white hover:bg-orange-600" onClick={handleUnpublish} isLoading={isUnpublishing}>Unpublish</Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Publish Confirmation Modal */}
+      <Modal
+        isOpen={!!postToPublish}
+        onClose={() => setPostToPublish(null)}
+        title="Publish Article"
+        width="sm"
+      >
+        <div className="text-center">
+          <div className="w-16 h-16 bg-green-50 dark:bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4 text-success">
+            <Eye className="w-8 h-8" />
+          </div>
+          <p className="text-gray-900 dark:text-white font-bold mb-2">Confirm Publish</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
+            Are you sure you want to publish <span className="font-semibold text-gray-900 dark:text-gray-100">"{postToPublish?.title}"</span>? This will make it visible to the public.
+          </p>
+          <div className="flex gap-3">
+            <Button variant="secondary" className="flex-1 rounded-full" onClick={() => setPostToPublish(null)}>Cancel</Button>
+            <Button className="flex-1 rounded-full bg-success text-white hover:bg-green-600" onClick={handlePublish} isLoading={isPublishing}>Publish</Button>
           </div>
         </div>
       </Modal>

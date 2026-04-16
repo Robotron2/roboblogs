@@ -25,7 +25,7 @@ export default function Dashboard() {
         const res = await postsApi.getAll({ page, limit: 10 });
         const data = res.data.data;
         setPosts(data.posts);
-        setTotalPages(Math.ceil(data.total / data.limit));
+        setTotalPages(Math.max(1, Math.ceil((data.total || 0) / (data.limit || 10))));
       } catch {
         toast.error('Failed to load posts');
       } finally {

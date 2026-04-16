@@ -25,12 +25,26 @@ export const deletePost = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getPosts = catchAsync(async (req: AuthRequest, res: Response) => {
-  const result = await postService.getAllPosts(req.query, req.user?._id);
+  const isAdmin = req.user?.role === 'admin';
+  const result = await postService.getAllPosts(req.query, req.user?._id, isAdmin);
   res.status(200).json(new ApiResponse(true, 'Posts retrieved successfully', result));
 });
 
 export const getPost = catchAsync(async (req: AuthRequest, res: Response) => {
   if (!req.params.slug) throw new ApiError(400, 'Post slug is required');
-  const post = await postService.getPostBySlug(req.params.slug as string, req.user?._id);
+  const isAdmin = req.user?.role === 'admin';
+  const post = await postService.getPostBySlug(req.params.slug as string, req.user?._id, isAdmin);
   res.status(200).json(new ApiResponse(true, 'Post retrieved successfully', post));
+});
+
+export const unpublishPost = catchAsync(async (req: Request, res: Response) => {
+  if (!req.params.id) throw new ApiError(400, 'Post ID is required');
+  const post = await postService.unpublishPost(req.params.id as string);
+  res.status(200).json(new ApiResponse(true, 'Post unpublished successfully', post));
+});
+
+export const publishPost = catchAsync(async (req: Request, res: Response) => {
+  if (!req.params.id) throw new ApiError(400, 'Post ID is required');
+  const post = await postService.publishPost(req.params.id as string);
+  res.status(200).json(new ApiResponse(true, 'Post published successfully', post));
 });
