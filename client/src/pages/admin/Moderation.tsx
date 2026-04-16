@@ -112,6 +112,7 @@ export default function Moderation() {
                              href={`/article/${(comment.post as any).slug}`} 
                              target="_blank" 
                              className="p-1.5 text-gray-400 hover:text-primary transition-colors text-xs flex items-center gap-1"
+                             title="View article"
                            >
                               View <ExternalLink className="w-3 h-3" />
                            </a>
@@ -119,6 +120,7 @@ export default function Moderation() {
                          <button 
                            onClick={() => setCommentToDelete(comment)}
                            className="p-1.5 text-gray-400 hover:text-error transition-colors"
+                           title="Delete comment"
                          >
                            <Trash2 className="w-4 h-4" />
                          </button>

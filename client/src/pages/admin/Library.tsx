@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, MoreVertical, Edit2, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Search, Filter, MoreVertical, Edit2, Trash2, Eye, EyeOff, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { postsApi } from '../../api/posts.api';
 import { categoriesApi } from '../../api/categories.api';
@@ -204,10 +204,10 @@ export default function Library() {
               </div>
 
               <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Link to={`/article/${post.slug}`} target="_blank" className="p-2 text-gray-400 hover:text-primary transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg">
-                  <Eye className="w-4 h-4" />
+                <Link to={`/article/${post.slug}`} target="_blank" className="p-2 text-gray-400 hover:text-primary transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg" title="View article">
+                  <ExternalLink className="w-4 h-4" />
                 </Link>
-                <Link to={`/admin/posts/${post._id}/edit`} className="p-2 text-gray-400 hover:text-primary transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg">
+                <Link to={`/admin/posts/${post._id}/edit`} className="p-2 text-gray-400 hover:text-primary transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg" title="Edit article">
                   <Edit2 className="w-4 h-4" />
                 </Link>
                 {post.isPublished ? (
