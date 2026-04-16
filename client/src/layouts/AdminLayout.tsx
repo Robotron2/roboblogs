@@ -1,12 +1,14 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Book, PenTool, Tag, MessageSquare, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Book, PenTool, Tag, MessageSquare, LogOut, Menu, X, Moon, Sun } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { useState } from 'react';
 
 export default function AdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const navItems = [
@@ -36,7 +38,7 @@ export default function AdminLayout() {
                   <Link 
                     key={item.path} 
                     to={item.path} 
-                    className={`px-4 py-2 rounded-full transition-all flex items-center gap-2 ${
+                    className={`px-4 py-2 rounded-lg transition-all flex items-center gap-2 ${
                       isActive 
                         ? 'bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400 shadow-sm' 
                         : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50'
@@ -55,13 +57,21 @@ export default function AdminLayout() {
               <p className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{user?.name}</p>
               <p className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">{user?.role === 'admin' ? 'Chief Editor' : 'Author'}</p>
             </div>
+
+            <button 
+              onClick={toggleTheme}
+              className="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+              title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
             
             <button 
               onClick={() => {
                 logout();
                 navigate('/login');
               }}
-              className="p-2 text-gray-400 hover:text-error transition-colors rounded-full hover:bg-gray-50 dark:hover:bg-gray-800"
+              className="p-2 text-gray-400 hover:text-error transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
               title="Logout"
             >
               <LogOut className="w-5 h-5" />

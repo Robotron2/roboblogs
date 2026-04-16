@@ -50,7 +50,7 @@ export default function ForgotPassword() {
         />
 
         <div className="pt-4">
-          <Button type="submit" className="w-full rounded-full" isLoading={isSubmitting}>
+          <Button type="submit" className="w-full rounded-lg" isLoading={isSubmitting}>
             Send Reset Link
           </Button>
         </div>

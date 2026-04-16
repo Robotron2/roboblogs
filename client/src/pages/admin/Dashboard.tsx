@@ -68,7 +68,7 @@ export default function Dashboard() {
           <p className="text-body">Manage your articles and content.</p>
         </div>
         <Link to="/admin/posts/new" className="hidden sm:block">
-          <button className="bg-primary text-white px-5 py-2.5 rounded-full text-sm font-medium hover:bg-primary-700 transition-colors">
+          <button className="bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
             Write an article
           </button>
         </Link>
@@ -112,7 +112,7 @@ export default function Dashboard() {
             description="Start writing your first article to see it here."
             action={
               <Link to="/admin/posts/new">
-                <button className="bg-primary text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-primary-700 transition-colors">
+                <button className="bg-primary text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
                   Write an article
                 </button>
               </Link>
@@ -137,7 +137,7 @@ export default function Dashboard() {
                       {post.title}
                     </td>
                     <td className="px-6 py-4">
-                      <span className="px-2 py-1 bg-green-50 dark:bg-green-500/10 text-success text-xs font-semibold rounded-full">
+                      <span className="px-2 py-1 bg-green-50 dark:bg-green-500/10 text-success text-xs font-semibold rounded-lg">
                         Published
                       </span>
                     </td>
@@ -186,14 +186,14 @@ export default function Dashboard() {
           <div className="flex gap-3">
             <Button 
               variant="secondary" 
-              className="flex-1 rounded-full" 
+              className="flex-1 rounded-lg" 
               onClick={() => setPostToDelete(null)}
             >
               Cancel
             </Button>
             <Button 
               variant="danger" 
-              className="flex-1 rounded-full" 
+              className="flex-1 rounded-lg" 
               onClick={handleDelete}
               isLoading={isDeleting}
             >

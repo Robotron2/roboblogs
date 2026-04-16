@@ -220,7 +220,7 @@ export default function CreatePost() {
               >
                 <X className="w-5 h-5" />
               </button>
-              <Button size="sm" onClick={handleRestore} className="rounded-full px-4">
+              <Button size="sm" onClick={handleRestore} className="rounded-lg px-4">
                 Restore
               </Button>
             </div>
@@ -280,7 +280,7 @@ export default function CreatePost() {
                   key={cat._id}
                   type="button"
                   onClick={() => toggleCategory(cat._id)}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all border ${
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all border ${
                     isSelected
                       ? 'bg-primary border-primary text-white shadow-sm'
                       : 'border-gray-200 dark:border-gray-800 text-gray-500 hover:border-primary/50'
@@ -314,7 +314,7 @@ export default function CreatePost() {
               type="button" 
               variant="ghost" 
               size="sm" 
-              className="rounded-full"
+              className="rounded-lg"
               onClick={() => {
                 const { title, content, coverImage, categories: selectedCats } = watchedFields;
                 saveDraft({ title, content, coverImage, categories: selectedCats });
@@ -323,7 +323,7 @@ export default function CreatePost() {
             >
               Save Draft
             </Button>
-            <Button type="submit" size="sm" className="rounded-full px-6" isLoading={isSubmitting}>Publish</Button>
+            <Button type="submit" size="sm" className="rounded-lg px-6" isLoading={isSubmitting}>Publish</Button>
           </div>
         </div>
 

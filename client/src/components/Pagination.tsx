@@ -17,7 +17,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         size="sm" 
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="w-10 h-10 p-0 rounded-full"
+        className="w-10 h-10 p-0 rounded-lg"
       >
         <span className="sr-only">Previous</span>
         <ChevronLeft className="h-5 w-5" />
@@ -28,7 +28,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         variant={currentPage === 1 ? 'primary' : 'ghost'} 
         size="sm" 
         onClick={() => onPageChange(1)}
-        className="w-10 h-10 p-0 rounded-full"
+        className="w-10 h-10 p-0 rounded-lg"
       >
         1
       </Button>
@@ -43,7 +43,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
          <Button 
            variant="primary" 
            size="sm" 
-           className="w-10 h-10 p-0 rounded-full"
+           className="w-10 h-10 p-0 rounded-lg"
          >
            {currentPage}
          </Button>
@@ -59,7 +59,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         variant={currentPage === totalPages ? 'primary' : 'ghost'} 
         size="sm" 
         onClick={() => onPageChange(totalPages)}
-        className="w-10 h-10 p-0 rounded-full"
+        className="w-10 h-10 p-0 rounded-lg"
       >
         {totalPages}
       </Button>
@@ -69,7 +69,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         size="sm" 
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="w-10 h-10 p-0 rounded-full"
+        className="w-10 h-10 p-0 rounded-lg"
       >
         <span className="sr-only">Next</span>
         <ChevronRight className="h-5 w-5" />

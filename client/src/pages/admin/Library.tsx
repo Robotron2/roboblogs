@@ -260,8 +260,8 @@ export default function Library() {
             Are you sure you want to remove <span className="font-semibold text-gray-900 dark:text-gray-100">"{postToDelete?.title}"</span>? This action is permanent.
           </p>
           <div className="flex gap-3">
-            <Button variant="secondary" className="flex-1 rounded-full" onClick={() => setPostToDelete(null)}>Cancel</Button>
-            <Button variant="danger" className="flex-1 rounded-full" onClick={handleDelete} isLoading={isDeleting}>Delete</Button>
+            <Button variant="secondary" className="flex-1 rounded-lg" onClick={() => setPostToDelete(null)}>Cancel</Button>
+            <Button variant="danger" className="flex-1 rounded-lg" onClick={handleDelete} isLoading={isDeleting}>Delete</Button>
           </div>
         </div>
       </Modal>
@@ -282,8 +282,8 @@ export default function Library() {
             Are you sure you want to unpublish <span className="font-semibold text-gray-900 dark:text-gray-100">"{postToUnpublish?.title}"</span>? This will hide it from the public feed.
           </p>
           <div className="flex gap-3">
-            <Button variant="secondary" className="flex-1 rounded-full" onClick={() => setPostToUnpublish(null)}>Cancel</Button>
-            <Button className="flex-1 rounded-full bg-orange-500 text-white hover:bg-orange-600" onClick={handleUnpublish} isLoading={isUnpublishing}>Unpublish</Button>
+            <Button variant="secondary" className="flex-1 rounded-lg" onClick={() => setPostToUnpublish(null)}>Cancel</Button>
+            <Button className="flex-1 rounded-lg bg-orange-500 text-white hover:bg-orange-600" onClick={handleUnpublish} isLoading={isUnpublishing}>Unpublish</Button>
           </div>
         </div>
       </Modal>
@@ -304,8 +304,8 @@ export default function Library() {
             Are you sure you want to publish <span className="font-semibold text-gray-900 dark:text-gray-100">"{postToPublish?.title}"</span>? This will make it visible to the public.
           </p>
           <div className="flex gap-3">
-            <Button variant="secondary" className="flex-1 rounded-full" onClick={() => setPostToPublish(null)}>Cancel</Button>
-            <Button className="flex-1 rounded-full bg-success text-white hover:bg-green-600" onClick={handlePublish} isLoading={isPublishing}>Publish</Button>
+            <Button variant="secondary" className="flex-1 rounded-lg" onClick={() => setPostToPublish(null)}>Cancel</Button>
+            <Button className="flex-1 rounded-lg bg-success text-white hover:bg-green-600" onClick={handlePublish} isLoading={isPublishing}>Publish</Button>
           </div>
         </div>
       </Modal>

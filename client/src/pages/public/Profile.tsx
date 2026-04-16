@@ -35,7 +35,7 @@ export default function Profile() {
           <div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user.name}</h2>
             <p className="text-sm text-body">{user.email}</p>
-            <span className="inline-block mt-2 px-2.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-body rounded-full uppercase tracking-wider">
+            <span className="inline-block mt-2 px-2.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-body rounded-lg uppercase tracking-wider">
               {user.role}
             </span>
           </div>

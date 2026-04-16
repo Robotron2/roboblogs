@@ -77,7 +77,7 @@ export default function Login() {
           <Link to="/register" className="text-sm font-medium text-primary hover:text-primary-700 transition-colors">
             Create account
           </Link>
-          <Button type="submit" className="min-w-[100px] rounded-full" isLoading={isSubmitting}>
+          <Button type="submit" className="min-w-[100px] rounded-lg" isLoading={isSubmitting}>
             Next
           </Button>
         </div>

@@ -19,7 +19,7 @@ export default function NotFound() {
 
       <div className="flex flex-col sm:flex-row gap-4">
         <Link to="/">
-          <Button className="rounded-full px-8 flex items-center gap-2">
+          <Button className="rounded-lg px-8 flex items-center gap-2">
             <Home className="w-4 h-4" />
             Back to Home
           </Button>

@@ -105,7 +105,7 @@ export default function Categories() {
         </div>
         <Button 
           size="sm" 
-          className="rounded-full" 
+          className="rounded-lg" 
           onClick={() => {
             setEditingCategory(null);
             reset();
@@ -189,14 +189,14 @@ export default function Categories() {
             <Button 
               type="button"
               variant="secondary" 
-              className="flex-1 rounded-full" 
+              className="flex-1 rounded-lg" 
               onClick={() => setIsModalOpen(false)}
             >
               Cancel
             </Button>
             <Button 
               type="submit"
-              className="flex-1 rounded-full" 
+              className="flex-1 rounded-lg" 
               isLoading={isSubmitting}
             >
               {editingCategory ? 'Update' : 'Create'}
@@ -221,8 +221,8 @@ export default function Categories() {
             Deleting <span className="font-semibold text-gray-900 dark:text-gray-100">"{categoryToDelete?.name}"</span> will remove it from all tagged articles.
           </p>
           <div className="flex gap-3">
-            <Button variant="secondary" className="flex-1 rounded-full" onClick={() => setCategoryToDelete(null)}>Cancel</Button>
-            <Button variant="danger" className="flex-1 rounded-full" onClick={handleDelete} isLoading={isDeleting}>Delete</Button>
+            <Button variant="secondary" className="flex-1 rounded-lg" onClick={() => setCategoryToDelete(null)}>Cancel</Button>
+            <Button variant="danger" className="flex-1 rounded-lg" onClick={handleDelete} isLoading={isDeleting}>Delete</Button>
           </div>
         </div>
       </Modal>

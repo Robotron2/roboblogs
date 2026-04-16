@@ -157,8 +157,8 @@ export default function Moderation() {
             Are you sure you want to delete this comment? This action will permanently remove it from the article.
           </p>
           <div className="flex gap-3">
-            <Button variant="secondary" className="flex-1 rounded-full" onClick={() => setCommentToDelete(null)}>Cancel</Button>
-            <Button variant="danger" className="flex-1 rounded-full" onClick={handleDelete} isLoading={isDeleting}>Delete</Button>
+            <Button variant="secondary" className="flex-1 rounded-lg" onClick={() => setCommentToDelete(null)}>Cancel</Button>
+            <Button variant="danger" className="flex-1 rounded-lg" onClick={handleDelete} isLoading={isDeleting}>Delete</Button>
           </div>
         </div>
       </Modal>

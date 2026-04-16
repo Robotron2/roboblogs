@@ -128,7 +128,7 @@ export default function Home() {
         <div className="flex items-center gap-2 min-w-max pb-2">
           <button
             onClick={() => handleCategoryChange('')}
-            className={`px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all ${
+            className={`px-6 py-2 rounded-lg text-xs font-bold tracking-widest uppercase transition-all ${
               currentCategory === ''
                 ? 'bg-primary text-white shadow-md shadow-primary/20'
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white'
@@ -140,7 +140,7 @@ export default function Home() {
             <button
               key={cat._id}
               onClick={() => handleCategoryChange(cat.slug)}
-              className={`px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all ${
+              className={`px-6 py-2 rounded-lg text-xs font-bold tracking-widest uppercase transition-all ${
                 currentCategory === cat.slug
                   ? 'bg-primary text-white shadow-md shadow-primary/20'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white'
@@ -281,9 +281,9 @@ export default function Home() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isSubscribing}
-            className="flex-1 h-11 rounded-full border border-gray-200 bg-white px-5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-gray-700 dark:bg-gray-800 dark:text-white disabled:opacity-50" 
+            className="flex-1 h-11 rounded-lg border border-gray-200 bg-white px-5 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-gray-700 dark:bg-gray-800 dark:text-white disabled:opacity-50" 
           />
-          <Button type="submit" size="md" className="rounded-full px-8" isLoading={isSubscribing}>Subscribe</Button>
+          <Button type="submit" size="md" className="rounded-lg px-8" isLoading={isSubscribing}>Subscribe</Button>
         </form>
       </section>
     </div>

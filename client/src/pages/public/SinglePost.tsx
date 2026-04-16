@@ -160,14 +160,14 @@ export default function SinglePost() {
           <div className="flex items-center gap-3">
             <button 
               onClick={handleCopyLink}
-              className="flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full transition-all text-gray-500 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              className="flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-lg transition-all text-gray-500 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               title="Copy Link"
             >
               <LinkIcon className="w-4 h-4" /> Share
             </button>
             <button 
               onClick={handleLike}
-              className={`flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full transition-all ${
+              className={`flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-lg transition-all ${
                 isLiked 
                   ? 'text-white bg-error shadow-md shadow-error/20' 
                   : 'text-error hover:bg-red-50 dark:hover:bg-red-500/10'
@@ -217,7 +217,7 @@ export default function SinglePost() {
               />
               <div className="flex justify-between items-center p-3 bg-gray-50/50 dark:bg-gray-900/50 rounded-b-xl border-t border-gray-100 dark:border-gray-800">
                 <p className="text-[10px] text-gray-400 font-medium px-2">Signed in as {currentUser?.name}</p>
-                <Button type="submit" size="sm" className="rounded-full px-6" isLoading={isSubmitting}>
+                <Button type="submit" size="sm" className="rounded-lg px-6" isLoading={isSubmitting}>
                   Post Comment
                 </Button>
               </div>
@@ -229,8 +229,8 @@ export default function SinglePost() {
             <p className="text-sm font-bold text-gray-900 dark:text-white mb-2">Join the conversation</p>
             <p className="text-xs text-body mb-6 max-w-[240px]">Sign in to RoboBlogs to share your thoughts and interact with our community.</p>
             <div className="flex gap-4">
-              <Link to="/login"><Button size="sm" variant="outline" className="rounded-full px-6">Login</Button></Link>
-              <Link to="/register"><Button size="sm" className="rounded-full px-6">Sign Up</Button></Link>
+              <Link to="/login"><Button size="sm" variant="outline" className="rounded-lg px-6">Login</Button></Link>
+              <Link to="/register"><Button size="sm" className="rounded-lg px-6">Sign Up</Button></Link>
             </div>
           </div>
         )}
