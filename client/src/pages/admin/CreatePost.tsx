@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import Button from '../../components/Button';
+import RichEditor from '../../components/RichEditor';
 import { createPostSchema } from '../../utils/schemas';
 import { postsApi } from '../../api/posts.api';
 import { categoriesApi } from '../../api/categories.api';
@@ -11,7 +12,8 @@ import { uploadImage } from '../../utils/cloudinary';
 import { useDraft } from '../../hooks/useDraft';
 import type { CreatePostFormData } from '../../utils/schemas';
 import type { Category } from '../../types';
-import { useEffect, useRef, useState } from 'react'
+import type { Editor } from '@tiptap/react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 export default function CreatePost() {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +24,7 @@ export default function CreatePost() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [showRestorePrompt, setShowRestorePrompt] = useState(false);
+  const [editor, setEditor] = useState<Editor | null>(null);
 
   const { loadDraft, saveDraft, clearDraft } = useDraft();
 
@@ -43,6 +46,25 @@ export default function CreatePost() {
   });
 
   const watchedFields = watch();
+
+  const handleEditorReady = useCallback((e: Editor) => {
+    setEditor(e);
+  }, []);
+
+  const handleEditorChange = useCallback(
+    (html: string) => {
+      setValue('content', html, { shouldValidate: true });
+    },
+    [setValue]
+  );
+
+  // Toolbar helper
+  const toolbarBtn = (isActive: boolean) =>
+    `p-2 rounded transition-colors ${
+      isActive
+        ? 'bg-primary/10 text-primary'
+        : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'
+    }`;
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -278,14 +300,14 @@ export default function CreatePost() {
         {/* Toolbar */}
         <div className="sticky top-16 z-40 bg-white/90 dark:bg-surface-dark/90 backdrop-blur-md rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-2 flex items-center justify-between mb-8">
           <div className="flex items-center gap-1">
-            <button type="button" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-600 dark:text-gray-300 transition-colors"><Bold className="w-4 h-4" /></button>
-            <button type="button" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-600 dark:text-gray-300 transition-colors"><Italic className="w-4 h-4" /></button>
+            <button type="button" className={toolbarBtn(editor?.isActive('bold') ?? false)} onClick={() => editor?.chain().focus().toggleBold().run()}><Bold className="w-4 h-4" /></button>
+            <button type="button" className={toolbarBtn(editor?.isActive('italic') ?? false)} onClick={() => editor?.chain().focus().toggleItalic().run()}><Italic className="w-4 h-4" /></button>
             <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2" />
-            <button type="button" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-600 dark:text-gray-300 transition-colors"><Heading1 className="w-4 h-4" /></button>
-            <button type="button" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-600 dark:text-gray-300 transition-colors"><Heading2 className="w-4 h-4" /></button>
+            <button type="button" className={toolbarBtn(editor?.isActive('heading', { level: 1 }) ?? false)} onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}><Heading1 className="w-4 h-4" /></button>
+            <button type="button" className={toolbarBtn(editor?.isActive('heading', { level: 2 }) ?? false)} onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 className="w-4 h-4" /></button>
             <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2" />
-            <button type="button" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-600 dark:text-gray-300 transition-colors"><List className="w-4 h-4" /></button>
-            <button type="button" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded text-gray-600 dark:text-gray-300 transition-colors"><Code className="w-4 h-4" /></button>
+            <button type="button" className={toolbarBtn(editor?.isActive('bulletList') ?? false)} onClick={() => editor?.chain().focus().toggleBulletList().run()}><List className="w-4 h-4" /></button>
+            <button type="button" className={toolbarBtn(editor?.isActive('codeBlock') ?? false)} onClick={() => editor?.chain().focus().toggleCodeBlock().run()}><Code className="w-4 h-4" /></button>
           </div>
 
           <div className="flex gap-3">
@@ -302,16 +324,17 @@ export default function CreatePost() {
             >
               Save Draft
             </Button>
-            <Button type="submit" size="sm" className="rounded-lg px-6" isLoading={isSubmitting}>Publish</Button>
+            <Button type="submit" size="sm" className="rounded-lg px-6" isLoading={isSubmitting}>{isEdit ? 'Update' : 'Publish'}</Button>
           </div>
         </div>
 
         {/* Content */}
         <div className="w-full">
-          <textarea
+          <RichEditor
+            content={watchedFields.content || ''}
+            onChange={handleEditorChange}
+            onEditorReady={handleEditorReady}
             placeholder="Tell your story..."
-            className="w-full text-lg leading-relaxed bg-transparent border-none focus:ring-0 focus:outline-none min-h-[400px] resize-none p-0 placeholder:text-gray-300 dark:placeholder:text-gray-700 text-gray-700 dark:text-gray-300"
-            {...register('content')}
           />
           {errors.content && <p className="text-sm text-error mt-1">{errors.content.message}</p>}
         </div>
