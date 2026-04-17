@@ -14,32 +14,23 @@ export default function Navbar() {
   const location = useLocation();
   const { isAuthenticated, isAdmin, user } = useAuth();
 
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Articles', path: '/blogs' },
+  ];
+
   // Handle Search Debounce
   useEffect(() => {
-    if (location.pathname !== '/' && !searchQuery) return;
-    
     const timeoutId = setTimeout(() => {
       if (searchQuery) {
-        navigate(`/?search=${encodeURIComponent(searchQuery)}`);
-      } else if (location.pathname === '/' && searchParams.get('search')) {
-        navigate('/');
+        navigate(`/blogs?search=${encodeURIComponent(searchQuery)}`);
+      } else if (location.pathname === '/blogs' && searchParams.get('search')) {
+        navigate('/blogs');
       }
     }, 500);
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery, navigate, location.pathname]);
-
-  // Sync search input with URL params
-  useEffect(() => {
-    setSearchQuery(searchParams.get('search') || '');
-  }, [searchParams]);
-
-  // Theme toggle logic moved to ThemeContext
-
-
-  const navLinks = [
-    { name: 'Home', path: '/' },
-  ];
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark">

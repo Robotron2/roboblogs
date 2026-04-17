@@ -5,6 +5,7 @@ import AuthLayout from './layouts/AuthLayout';
 import AdminLayout from './layouts/AdminLayout';
 
 import Home from './pages/public/Home';
+import Blogs from './pages/public/Blogs';
 import SinglePost from './pages/public/SinglePost';
 import Profile from './pages/public/Profile';
 
@@ -41,6 +42,7 @@ function App() {
         {/* Public Routes */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/blogs" element={<Blogs />} />
           <Route path="/article/:slug" element={<SinglePost />} />
           <Route path="/profile" element={
             <PrivateRoute>
