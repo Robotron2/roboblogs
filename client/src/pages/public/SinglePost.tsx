@@ -14,6 +14,7 @@ import { likesApi } from '../../api/likes.api';
 import { commentSchema } from '../../utils/schemas';
 import type { Post, Comment, User } from '../../types';
 import type { CommentFormData } from '../../utils/schemas';
+import '../../styles/editor.css';
 
 export default function SinglePost() {
   const { slug } = useParams<{ slug: string }>();
@@ -201,7 +202,7 @@ export default function SinglePost() {
 
       {/* Article Body */}
       <div 
-        className="prose prose-lg dark:prose-invert max-w-none text-main-light dark:text-main-dark leading-[1.8] font-serif"
+        className="rich-editor-content text-main-light dark:text-main-dark leading-[1.8] font-serif"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 

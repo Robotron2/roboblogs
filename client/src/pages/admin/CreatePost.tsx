@@ -13,6 +13,7 @@ import { useDraft } from '../../hooks/useDraft';
 import type { CreatePostFormData } from '../../utils/schemas';
 import type { Category } from '../../types';
 import type { Editor } from '@tiptap/react';
+import '../../styles/editor.css';
 import { useEffect, useRef, useState, useCallback } from 'react';
 
 export default function CreatePost() {
@@ -329,16 +330,23 @@ export default function CreatePost() {
             <button type="button" title="Code Block" className={toolbarBtn(editor?.isActive('codeBlock') ?? false)} onClick={() => editor?.chain().focus().toggleCodeBlock().run()}><Code className="w-4 h-4" /></button>
             
             {editor?.isActive('codeBlock') && (
-              <select
-                className="ml-2 px-2 py-1 text-[10px] font-bold bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded focus:outline-none cursor-pointer text-gray-700 dark:text-gray-300"
-                value={editor.getAttributes('codeBlock').language || 'javascript'}
-                onChange={(e) => editor.chain().focus().updateAttributes('codeBlock', { language: e.target.value }).run()}
-                title="Select Language"
-              >
-                {SUPPORTED_LANGUAGES.map((lang) => (
-                  <option key={lang.value} value={lang.value}>{lang.label}</option>
-                ))}
-              </select>
+              <div className="relative ml-2">
+                <select
+                  className="appearance-none pl-3 pr-8 py-1.5 text-[10px] font-bold bg-white dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer text-gray-700 dark:text-gray-300 transition-all shadow-sm hover:border-primary/30"
+                  value={editor.getAttributes('codeBlock').language || 'javascript'}
+                  onChange={(e) => editor.chain().focus().updateAttributes('codeBlock', { language: e.target.value }).run()}
+                  title="Select Language"
+                >
+                  {SUPPORTED_LANGUAGES.map((lang) => (
+                    <option key={lang.value} value={lang.value}>{lang.label}</option>
+                  ))}
+                </select>
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </div>
+              </div>
             )}
           </div>
 
