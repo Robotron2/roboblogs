@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Subscriber } from '../models/subscriber.model';
+import { NewsletterLog } from '../models/newsletterLog.model';
 import catchAsync from '../utils/catchAsync';
 import ApiResponse from '../utils/ApiResponse';
 import ApiError from '../utils/ApiError';
@@ -48,4 +49,13 @@ export const unsubscribe = catchAsync(async (req: Request, res: Response) => {
   } catch (error) {
     throw new ApiError(400, 'Invalid or expired unsubscribe link');
   }
+});
+
+export const getLogs = catchAsync(async (req: Request, res: Response) => {
+  const logs = await NewsletterLog.find()
+    .populate('post', 'title slug')
+    .sort({ startedAt: -1 })
+    .limit(50);
+    
+  res.status(200).json(new ApiResponse(true, 'Newsletter logs retrieved', logs));
 });

@@ -49,7 +49,8 @@ export default function Library() {
           page, 
           limit: 15, 
           search: search || undefined, 
-          category: selectedCategory || undefined 
+          category: selectedCategory || undefined,
+          status: 'all'
         });
         const data = res.data.data;
         setPosts(data.posts);

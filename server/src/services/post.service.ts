@@ -25,8 +25,40 @@ const calculateReadTime = (content: string): number => {
   return Math.ceil(wordCount / 200);
 };
 
+/**
+ * Handle newsletter dispatch reliably and non-blocking
+ */
+const handleNewsletterDispatch = async (post: IPost) => {
+  if (post.isPublished && !post.newsletterSent) {
+    console.log("Preparing newsletter dispatch");
+    
+    try {
+      const subscribers = await Subscriber.find({ isActive: true });
+      console.log("Subscribers fetched:", subscribers.length);
+
+      if (subscribers.length > 0) {
+        // Mark as sent before scheduling to prevent race conditions 
+        post.newsletterSent = true;
+
+        // Schedule detached execution
+        setImmediate(() => {
+          sendBulkNewsletter(subscribers, post).catch(err => {
+            console.error("Newsletter dispatch failed:", err);
+          });
+        });
+
+        console.log("Newsletter job scheduled");
+      }
+    } catch (err) {
+      console.error("Failed to fetch subscribers for newsletter:", err);
+    }
+  }
+};
+
 export const createPost = async (postData: Partial<IPost>) => {
-  const post = await Post.create(postData);
+  const post = new Post(postData);
+  await handleNewsletterDispatch(post);
+  await post.save();
   return post;
 };
 
@@ -37,6 +69,7 @@ export const updatePost = async (postId: string, updateData: Partial<IPost>) => 
   }
 
   Object.assign(post, updateData);
+  await handleNewsletterDispatch(post);
   await post.save();
   return post;
 };
@@ -58,12 +91,13 @@ export const deletePost = async (postId: string) => {
 };
 
 export const getAllPosts = async (query: any, currentUserId?: string, isAdmin: boolean = false) => {
-  const { page = 1, limit = 10, search = '', category = '' } = query;
+  const { page = 1, limit = 10, search = '', category = '', status = '' } = query;
   
   const filter: any = {};
 
-  if (!isAdmin) {
-    filter.isPublished = true;
+  // Default to only published posts for the public feed
+  if (status !== 'all' || !isAdmin) {
+    filter.isPublished = { $ne: false };
   }
 
   // 1. Category Filtering by Slug
@@ -112,6 +146,7 @@ export const getAllPosts = async (query: any, currentUserId?: string, isAdmin: b
 
     return {
       ...post,
+      isPublished: post.isPublished !== false,
       readTime: calculateReadTime(post.content),
       likesCount,
       isLiked
@@ -144,7 +179,7 @@ export const getPostBySlug = async (slug: string, currentUserId?: string, isAdmi
   const postQuery = Post.findOne({ $or: queryParts });
 
   if (!isAdmin) {
-    postQuery.where({ isPublished: true });
+    postQuery.where({ isPublished: { $ne: false } });
   }
 
   const post = await postQuery
@@ -175,6 +210,7 @@ export const getPostBySlug = async (slug: string, currentUserId?: string, isAdmi
 
   return {
     ...post,
+    isPublished: post.isPublished !== false,
     readTime: calculateReadTime(post.content),
     likesCount,
     isLiked
@@ -199,20 +235,7 @@ export const publishPost = async (postId: string) => {
   }
 
   post.isPublished = true;
-  
-  if (!post.newsletterSent) {
-    // Non-blocking newsletter dispatch
-    Subscriber.find({ isActive: true }).then(subscribers => {
-      if (subscribers.length > 0) {
-        sendBulkNewsletter(subscribers, post);
-      }
-    }).catch(err => {
-      console.error('Failed to fetch subscribers for newsletter:', err);
-    });
-    
-    post.newsletterSent = true;
-  }
-
+  await handleNewsletterDispatch(post);
   await post.save();
-  return post;
+  return post; 
 };

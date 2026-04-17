@@ -43,7 +43,12 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     // Only intercept 401s, skip refresh endpoint itself
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Also skip if there's no auth token set (user is logged out — public route)
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      api.defaults.headers.common['Authorization']
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });

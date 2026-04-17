@@ -64,7 +64,14 @@ export default function SinglePost() {
     if (!post) return;
     try {
       const res = await commentsApi.create({ post: post._id, content: data.content });
-      setComments([res.data.data, ...comments]);
+      const newComment = res.data.data;
+      
+      
+      if (typeof newComment.user === 'string' && currentUser) {
+        newComment.user = currentUser;
+      }
+      
+      setComments([newComment, ...comments]);
       reset();
       toast.success('Comment posted');
     } catch {
@@ -208,21 +215,37 @@ export default function SinglePost() {
 
         {/* Comment Form */}
         {isAuthenticated ? (
-          <form onSubmit={handleSubmit(onCommentSubmit)} className="mb-12">
-            <div className="p-1 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800 rounded-2xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
-              <textarea
-                placeholder="Share your thoughts..."
-                className="w-full bg-transparent border-none focus:ring-0 p-4 min-h-[120px] text-gray-800 dark:text-gray-200 resize-none"
-                {...register('content')}
-              />
-              <div className="flex justify-between items-center p-3 bg-gray-50/50 dark:bg-gray-900/50 rounded-b-xl border-t border-gray-100 dark:border-gray-800">
-                <p className="text-[10px] text-gray-400 font-medium px-2">Signed in as {currentUser?.name}</p>
-                <Button type="submit" size="sm" className="rounded-lg px-6" isLoading={isSubmitting}>
-                  Post Comment
-                </Button>
-              </div>
-            </div>
-          </form>
+        //   <form onSubmit={handleSubmit(onCommentSubmit)} className="mb-12">
+        //     <div className="p-1 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800 rounded-2xl focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary transition-all">
+        //       <textarea
+        //         placeholder="Share your thoughts..."
+        //         className="w-full bg-transparent border-none focus:ring-0 p-4 min-h-[120px] text-gray-800 dark:text-gray-200 resize-none"
+        //         {...register('content')}
+        //       />
+        //       <div className="flex justify-between items-center p-3 bg-gray-50/50 dark:bg-gray-900/50 rounded-b-xl border-t border-gray-100 dark:border-gray-800">
+        //         <p className="text-[10px] text-gray-400 font-medium px-2">Signed in as {currentUser?.name}</p>
+        //         <Button type="submit" size="sm" className="rounded-lg px-6" isLoading={isSubmitting}>
+        //           Post Comment
+        //         </Button>
+        //       </div>
+        //     </div>
+        //   </form>
+        <form onSubmit={handleSubmit(onCommentSubmit)} className="mb-12">
+  <div className="p-1 bg-white dark:bg-surface-dark border border-gray-200 dark:border-gray-800 rounded-2xl transition-all">
+    <textarea
+      placeholder="Share your thoughts..."
+      className="w-full bg-transparent border-none outline-none p-4 min-h-[120px] text-gray-800 dark:text-gray-200 resize-none focus:outline-none focus-visible:outline-none"
+      style={{ boxShadow: 'none' }}
+      {...register('content')}
+    />
+    <div className="flex justify-between items-center p-3 bg-gray-50/50 dark:bg-gray-900/50 rounded-b-xl border-t border-gray-100 dark:border-gray-800">
+      <p className="text-[10px] text-gray-400 font-medium px-2">Signed in as {currentUser?.name}</p>
+      <Button type="submit" size="sm" className="rounded-lg px-6" isLoading={isSubmitting}>
+        Post Comment
+      </Button>
+    </div>
+  </div>
+</form>
         ) : (
           <div className="flex flex-col items-center justify-center p-12 bg-gray-50 dark:bg-surface-dark/50 border border-gray-100 dark:border-gray-800 rounded-2xl mb-12 text-center">
             <MessageSquare className="w-8 h-8 text-gray-300 mb-4" />
@@ -238,11 +261,11 @@ export default function SinglePost() {
         {/* Comment List */}
         <div className="space-y-10">
           {comments.map((comment) => {
-            const commenter = typeof comment.user === 'object' ? (comment.user as User) : null;
+            const commenter = typeof comment.user === 'object' && comment.user !== null ? (comment.user as User) : null;
             return (
               <div key={comment._id} className="flex gap-5 group">
                 <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 font-bold text-sm shrink-0">
-                  {commenter?.name.charAt(0).toUpperCase() || 'U'}
+                  {commenter?.name ? commenter.name.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
@@ -254,14 +277,14 @@ export default function SinglePost() {
                   <p className="text-[15px] text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
                     {comment.content}
                   </p>
-                  <div className="flex items-center gap-5">
+                  {/* <div className="flex items-center gap-5">
                     <button className="text-[11px] font-bold text-gray-400 hover:text-error transition-colors flex items-center gap-1.5 uppercase tracking-wider">
                       <Heart className="w-3 h-3" /> Like
                     </button>
                     <button className="text-[11px] font-bold text-gray-400 hover:text-primary transition-colors uppercase tracking-wider">
                       Reply
                     </button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             );

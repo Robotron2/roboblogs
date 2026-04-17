@@ -26,7 +26,7 @@ export default function Dashboard() {
     const fetchPosts = async () => {
       setIsLoading(true);
       try {
-        const res = await postsApi.getAll({ page, limit: 10 });
+        const res = await postsApi.getAll({ page, limit: 10, status: 'all' });
         const data = res.data.data as any;
         setPosts(data.posts);
         setTotalPages(Math.max(1, Math.ceil((data.total || 0) / (data.limit || 10))));

@@ -9,7 +9,7 @@ interface CreatePostData {
 }
 
 export const postsApi = {
-  getAll: (params?: { page?: number; limit?: number; search?: string; category?: string }) =>
+  getAll: (params?: { page?: number; limit?: number; search?: string; category?: string; status?: string }) =>
     api.get<ApiResponse<PostPaginatedResponse>>('/posts', { params }),
 
   getBySlug: (slug: string) =>

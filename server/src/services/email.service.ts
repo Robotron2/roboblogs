@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import { IPost } from '../models/post.model';
 import { ISubscriber } from '../models/subscriber.model';
+import { NewsletterLog } from '../models/newsletterLog.model';
 
 const createTransporter = () => {
   return nodemailer.createTransport({
@@ -12,33 +13,60 @@ const createTransporter = () => {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
   });
 };
 
+
+
+
 export const sendEmail = async (to: string, subject: string, html: string) => {
+  const transporter = createTransporter();
+  
   try {
-    const transporter = createTransporter();
+    // Verify connection configuration
+    await transporter.verify();
+    console.log('SMTP transporter verification succeeded');
+
     await transporter.sendMail({
       from: `"RoboBlogs" <${process.env.SMTP_USER}>`,
       to,
       subject,
       html,
     });
+    
+    console.log(`Email sent successfully to ${to}`);
   } catch (error) {
     console.error(`Failed to send email to ${to}:`, error);
+    // Rethrow to ensure Promise.allSettled in bulk dispatch catches the failure
+    throw error;
   }
 };
 
 export const sendBulkNewsletter = async (subscribers: ISubscriber[], post: IPost) => {
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
   
+  // Create initial log entry
+  const log = await NewsletterLog.create({
+    post: post._id,
+    status: 'pending',
+    recipientCount: subscribers.length,
+    startedAt: new Date()
+  });
+
   // Extract a short excerpt (first 150 chars, stripping HTML if present)
-  let excerpt = post.content.replace(/<[^>]*>?/gm, '').substring(0, 150);
-  if (post.content.length > 150) excerpt += '...';
+  let excerpt = (post.content || '').replace(/<[^>]*>?/gm, '').substring(0, 150);
+  if ((post.content || '').length > 150) excerpt += '...';
 
   const promises = subscribers.map((sub) => {
     // Generate secure unsubscribe token using JWT
-    const token = jwt.sign({ email: sub.email }, process.env.JWT_SECRET as string, { expiresIn: '30d' });
+    const secret = process.env.JWT_SECRET;
+    if (!secret) {
+      throw new Error('JWT_SECRET is not defined in environment variables');
+    }
+    const token = jwt.sign({ email: sub.email }, secret, { expiresIn: '30d' });
     const unsubscribeLink = `${clientUrl}/newsletter/unsubscribe/${token}`;
     const postLink = `${clientUrl}/article/${post.slug}`;
 
@@ -62,8 +90,40 @@ export const sendBulkNewsletter = async (subscribers: ISubscriber[], post: IPost
   });
 
   // Execute asynchronously
-  Promise.allSettled(promises).then((results) => {
+  Promise.allSettled(promises).then(async (results) => {
+    const total = results.length;
     const successful = results.filter((r) => r.status === 'fulfilled').length;
-    console.log(`Newsletter sent to ${successful} out of ${promises.length} subscribers.`);
+    const failed = total - successful;
+
+    // Determine dynamic status
+    if (successful === total && total > 0) {
+      log.status = 'sent';
+    } else if (successful === 0 && total > 0) {
+      log.status = 'failed';
+    } else {
+      log.status = 'partially_sent';
+    }
+    
+    log.successCount = successful;
+    log.errorCount = failed;
+
+    log.completedAt = new Date();
+    
+    // Collect error messages from rejected promises if available
+    const errorMessages = results
+      .filter((r): r is PromiseRejectedResult => r.status === 'rejected')
+      .map((r) => String(r.reason));
+    
+    if (errorMessages.length > 0) {
+      log.errorDetails = errorMessages;
+    }
+
+    await log.save();
+    console.log(`Newsletter sent to ${successful} out of ${promises.length} subscribers. Log updated.`);
+  }).catch(async (err) => {
+    console.error('Fatal error in bulk newsletter process:', err);
+    log.status = 'failed';
+    log.errorDetails = [String(err)];
+    await log.save();
   });
 };

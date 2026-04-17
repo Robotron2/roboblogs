@@ -3,7 +3,7 @@ import ApiError from '../utils/ApiError';
 
 export const addComment = async (commentData: Partial<IComment>) => {
   const comment = await Comment.create(commentData);
-  return comment;
+  return await comment.populate('user', 'name');
 };
 
 export const getPostComments = async (postId: string, query: any) => {
