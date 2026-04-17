@@ -81,7 +81,7 @@ export default function Home() {
     <div className="w-full">
       {/* Hero Header */}
       <section className="mb-16 pt-8 max-w-4xl">
-        <h1 className="text-5xl md:text-7xl font-bold text-gray-900 dark:text-white tracking-tight leading-[1.1] mb-6">
+        <h1 className="text-5xl md:text-7xl font-bold text-main-light dark:text-main-dark tracking-tight leading-[1.1] mb-6">
           The Pulse of <span className="text-primary italic">Autonomous</span>
           <br />Innovation.
         </h1>
@@ -120,7 +120,7 @@ export default function Home() {
       {tertiaryPosts.length > 0 && (
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-16 mb-24">
             <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Deep Dives</h2>
+                <h2 className="text-2xl font-bold text-main-light dark:text-main-dark mb-6">Deep Dives</h2>
                 <div className="space-y-0">
                     {tertiaryPosts.map(post => (
                         <BlogCard key={post._id} post={post} variant="minimal" />
@@ -137,7 +137,7 @@ export default function Home() {
             
             {/* Newsletter Side Panel */}
             <div className="bg-gray-50 dark:bg-surface-dark rounded-3xl p-10 flex flex-col justify-center border border-gray-100 dark:border-gray-800 self-start lg:sticky lg:top-24">
-                <h3 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white mb-4">Stay ahead of the curve.</h3>
+                <h3 className="text-2xl font-bold tracking-tight text-main-light dark:text-main-dark mb-4">Stay ahead of the curve.</h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-8 leading-relaxed">
                     Get the week's most critical robotics news delivered directly to your inbox every Friday.
                 </p>
@@ -163,7 +163,7 @@ export default function Home() {
 
       {/* Global CTA Section */}
       <section className="py-24 border-t border-gray-100 dark:border-gray-800 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-bold text-main-light dark:text-main-dark mb-6 tracking-tight">
             Ready to explore further?
           </h2>
           <p className="text-gray-500 dark:text-gray-400 mb-10 max-w-xl mx-auto text-lg leading-relaxed">

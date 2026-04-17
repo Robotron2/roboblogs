@@ -6,6 +6,8 @@ import BlogGrid from '../../components/BlogGrid';
 import { BlogGridSkeleton } from '../../components/skeletons';
 import Pagination from '../../components/Pagination';
 import EmptyState from '../../components/EmptyState';
+import Input from '../../components/Input';
+import { Search } from 'lucide-react';
 import { postsApi } from '../../api/posts.api';
 import { categoriesApi } from '../../api/categories.api';
 import type { Post, Category } from '../../types';
@@ -22,6 +24,13 @@ export default function Blogs() {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [localSearch, setLocalSearch] = useState(searchQuery);
+  
+  // Sync state when URL changes externally (e.g. from Navbar)
+  useEffect(() => {
+    if (searchQuery !== localSearch) {
+      setLocalSearch(searchQuery);
+    }
+  }, [searchQuery]);
 
   // Fetch Categories
   useEffect(() => {
@@ -99,7 +108,7 @@ export default function Blogs() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Header Section */}
       <header className="mb-12 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
+        <h1 className="text-4xl md:text-5xl font-bold text-main-light dark:text-main-dark mb-4 tracking-tight">
           Explore Articles
         </h1>
         <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
@@ -111,26 +120,16 @@ export default function Blogs() {
       <div className="mb-12 space-y-8">
         {/* Search Bar */}
         <div className="max-w-xl mx-auto relative group">
-          <input
+          <Input
             type="text"
             placeholder="Search articles, topics, or authors..."
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
-            className="w-full h-14 pl-12 pr-6 rounded-2xl border-gray-100 dark:border-gray-800 bg-white dark:bg-surface-dark shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-gray-900 dark:text-white"
+            className="h-14 pl-12 pr-6 rounded-2xl shadow-sm"
           />
-          <svg
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-primary transition-colors"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+          <Search
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-primary transition-colors z-10"
+          />
         </div>
 
         {/* Category Tags */}

@@ -148,7 +148,7 @@ export default function SinglePost() {
           </span>
         </div>
         
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight mb-8">
+        <h1 className="text-3xl md:text-5xl font-bold text-main-light dark:text-main-dark leading-tight tracking-tight mb-8 font-sans">
           {post.title}
         </h1>
 
@@ -158,7 +158,7 @@ export default function SinglePost() {
               {author?.name.charAt(0).toUpperCase() || 'A'}
             </div>
             <div>
-              <p className="text-sm font-bold text-gray-900 dark:text-white">{author?.name || 'Anonymous'}</p>
+              <p className="text-sm font-bold text-main-light dark:text-main-dark">{author?.name || 'Anonymous'}</p>
               <p className="text-xs text-gray-400">
                 {new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
               </p>
@@ -201,7 +201,7 @@ export default function SinglePost() {
 
       {/* Article Body */}
       <div 
-        className="prose prose-lg dark:prose-invert max-w-none text-gray-800 dark:text-gray-200 leading-relaxed font-serif"
+        className="prose prose-lg dark:prose-invert max-w-none text-main-light dark:text-main-dark leading-[1.8] font-serif"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
@@ -210,7 +210,7 @@ export default function SinglePost() {
       {/* Comments Section */}
       <section id="comments">
         <div className="flex items-center justify-between mb-10">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+          <h3 className="text-2xl font-bold text-main-light dark:text-main-dark tracking-tight">
             Comments ({comments.length})
           </h3>
         </div>
@@ -251,7 +251,7 @@ export default function SinglePost() {
         ) : (
           <div className="flex flex-col items-center justify-center p-12 bg-gray-50 dark:bg-surface-dark/50 border border-gray-100 dark:border-gray-800 rounded-2xl mb-12 text-center">
             <MessageSquare className="w-8 h-8 text-gray-300 mb-4" />
-            <p className="text-sm font-bold text-gray-900 dark:text-white mb-2">Join the conversation</p>
+            <p className="text-sm font-bold text-main-light dark:text-main-dark mb-2">Join the conversation</p>
             <p className="text-xs text-body mb-6 max-w-[240px]">Sign in to RoboBlogs to share your thoughts and interact with our community.</p>
             <div className="flex gap-4">
               <Link to="/login"><Button size="sm" variant="outline" className="rounded-lg px-6">Login</Button></Link>
@@ -277,7 +277,7 @@ export default function SinglePost() {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="text-sm font-bold text-gray-900 dark:text-white">{commenter?.name || 'Anonymous'}</span>
+                    <span className="text-sm font-bold text-main-light dark:text-main-dark">{commenter?.name || 'Anonymous'}</span>
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                       {new Date(comment.createdAt).toLocaleDateString()}
                     </span>

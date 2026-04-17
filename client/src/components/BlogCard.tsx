@@ -38,7 +38,7 @@ export default function BlogCard({ post, variant = 'small' }: BlogCardProps) {
                 {post.readTime} Min Read
               </span>
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 leading-tight group-hover:text-primary transition-colors">
+            <h2 className="text-3xl font-bold text-main-light dark:text-main-dark mb-4 leading-tight group-hover:text-primary transition-colors">
               {post.title}
             </h2>
             <div
@@ -51,7 +51,7 @@ export default function BlogCard({ post, variant = 'small' }: BlogCardProps) {
                    {authorName.charAt(0)}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <p className="text-sm font-semibold text-main-light dark:text-main-dark">
                     {authorName}
                   </p>
                   <p className="text-xs text-gray-400">
@@ -82,7 +82,7 @@ export default function BlogCard({ post, variant = 'small' }: BlogCardProps) {
                 {publishDate}
             </span>
         </div>
-        <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-primary transition-colors leading-snug">
+        <h3 className="text-lg font-bold text-main-light dark:text-main-dark group-hover:text-primary transition-colors leading-snug">
           {post.title}
         </h3>
       </Link>
@@ -99,7 +99,7 @@ export default function BlogCard({ post, variant = 'small' }: BlogCardProps) {
           wrapperClassName="w-full h-full"
         />
         <div className="absolute top-4 right-4">
-          <span className="bg-white/95 dark:bg-surface-dark/95 backdrop-blur-md px-2.5 py-1 rounded text-[10px] font-bold text-gray-900 dark:text-white shadow-sm uppercase tracking-tight">
+          <span className="bg-white/95 dark:bg-surface-dark/95 backdrop-blur-md px-2.5 py-1 rounded text-[10px] font-bold text-main-light dark:text-main-dark shadow-sm uppercase tracking-tight">
             {post.readTime} min read
           </span>
         </div>
@@ -121,7 +121,7 @@ export default function BlogCard({ post, variant = 'small' }: BlogCardProps) {
             </span>
           )}
         </div>
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+        <h3 className="text-xl font-bold text-main-light dark:text-main-dark mb-3 leading-snug group-hover:text-primary transition-colors line-clamp-2">
           {post.title}
         </h3>
         <div

@@ -1,15 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-background-light text-gray-900 transition-colors duration-200 antialiased;
-    color: #1A1B1E;
+    background-color: theme('colors.background.light');
+    color: theme('colors.main-light');
+    @apply transition-colors duration-200 antialiased font-sans;
   }
   
   .dark body {
-    @apply bg-background-dark text-gray-100;
+    background-color: theme('colors.background.dark');
+    color: theme('colors.main-dark');
   }
 
   .shimmer {

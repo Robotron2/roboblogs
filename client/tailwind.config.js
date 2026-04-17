@@ -39,9 +39,13 @@ export default {
         success: '#0AAF55',
         warning: '#F1B033',
         error: '#BA3A1A',
+        // Flat tokens for better compatibility with theme() and @apply
+        'main-light': '#334155', // slate-700 (more noticeable dark-grey)
+        'main-dark': '#F8FAFC',  // slate-50
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        serif: ['Merriweather', 'serif'],
       },
     },
   },

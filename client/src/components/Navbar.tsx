@@ -6,6 +6,7 @@ import Skeleton from './Skeleton';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import Input from './Input';
 
 export default function Navbar() {
   const { isDark, toggleTheme } = useTheme();
@@ -19,6 +20,14 @@ export default function Navbar() {
     { name: 'Home', path: '/' },
     { name: 'Articles', path: '/blogs' },
   ];
+
+  // Sync with URL when it changes externally
+  useEffect(() => {
+    const fromUrl = searchParams.get('search') || '';
+    if (fromUrl !== searchQuery) {
+      setSearchQuery(fromUrl);
+    }
+  }, [searchParams]);
 
   // Handle Search Debounce
   useEffect(() => {
@@ -37,7 +46,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
-          <Link to="/" className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+          <Link to="/" className="text-lg font-bold tracking-tight text-main-light dark:text-main-dark">
             RoboBlogs
           </Link>
           
@@ -51,7 +60,7 @@ export default function Navbar() {
                   className={`pb-[17px] pt-[17px] border-b-2 transition-colors ${
                     isActive 
                       ? 'border-primary text-primary' 
-                      : 'border-transparent text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white'
+                      : 'border-transparent text-gray-500 hover:text-main-light dark:text-gray-400 dark:hover:text-main-dark'
                   }`}
                 >
                   {link.name}
@@ -63,13 +72,13 @@ export default function Navbar() {
 
         <div className="hidden md:flex items-center gap-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input 
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10" />
+            <Input 
               type="text" 
-              placeholder="Search articles..." 
+              placeholder="Search..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-9 w-56 rounded-lg border border-gray-300 bg-white pl-9 pr-4 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+              className="h-9 w-48 pl-9 pr-4 rounded-lg"
             />
           </div>
 
