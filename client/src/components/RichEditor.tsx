@@ -1,6 +1,8 @@
 import '../styles/editor.css';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+import { all, createLowlight } from 'lowlight';
 import { marked } from 'marked';
 import { useEffect, useCallback } from 'react';
 import type { Editor } from '@tiptap/react';
@@ -12,14 +14,19 @@ interface RichEditorProps {
   placeholder?: string;
 }
 
-// Lightweight check for markdown patterns
+// Initialize lowlight with all languages
+const lowlight = createLowlight(all);
+
+// Simplified markdown patterns for basic detection (avoiding lookbehinds to fix parser issues)
 const MARKDOWN_PATTERNS = [
-  /^#{1,3}\s/m,         // headings
-  /\*\*.+?\*\*/,        // bold
-  /(?<!\*)\*(?!\*).+?(?<!\*)\*(?!\*)/,  // italic
+  /^#+\s/m,             // headings
+  /\*\*.*\*\*/,         // bold
+  /__.*__/,             // bold alternate
+  /\*.*\*/,             // italic
+  /_.*_/,               // italic alternate
   /^[-*]\s/m,           // unordered list
   /^\d+\.\s/m,          // ordered list
-  /```[\s\S]*?```/,     // code blocks
+  /```/,                // code blocks
   /^>\s/m,              // blockquotes
 ];
 
@@ -37,7 +44,14 @@ export default function RichEditor({
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
-        codeBlock: { HTMLAttributes: { class: 'editor-code-block' } },
+        codeBlock: false, // Disable default code block
+      }),
+      CodeBlockLowlight.configure({
+        lowlight,
+        defaultLanguage: 'javascript',
+        HTMLAttributes: {
+          class: 'editor-code-block hljs',
+        },
       }),
     ],
     content,
@@ -49,22 +63,21 @@ export default function RichEditor({
       handlePaste: (_view, event) => {
         const clipboardText = event.clipboardData?.getData('text/plain');
 
-        // Only intercept plain text pastes that look like markdown
         if (!clipboardText || !looksLikeMarkdown(clipboardText)) {
-          return false; // Let TipTap handle it normally
+          return false;
         }
 
         try {
           const html = marked.parse(clipboardText, { async: false }) as string;
           if (html && typeof html === 'string') {
             editor?.chain().focus().insertContent(html).run();
-            return true; // We handled it
+            return true;
           }
         } catch (err) {
-          console.error('Markdown paste parsing failed, falling back to default:', err);
+          console.error('Markdown paste parsing failed:', err);
         }
 
-        return false; // Fallback to default paste
+        return false;
       },
     },
     onUpdate: ({ editor: e }) => {
@@ -72,19 +85,15 @@ export default function RichEditor({
     },
   });
 
-  // Expose editor to parent for toolbar control
   useEffect(() => {
     if (editor && onEditorReady) {
       onEditorReady(editor);
     }
   }, [editor, onEditorReady]);
 
-  // Sync external content changes (draft restore, edit mode load)
   const syncContent = useCallback(
     (newContent: string) => {
       if (!editor) return;
-      // Only update if the content actually differs from what's in the editor
-      // This prevents cursor jumps during normal typing
       const currentHtml = editor.getHTML();
       if (newContent !== currentHtml) {
         editor.commands.setContent(newContent, { emitUpdate: false });

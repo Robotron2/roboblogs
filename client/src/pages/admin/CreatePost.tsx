@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ImagePlus, Bold, Italic, Heading1, Heading2, List, Code, X, RefreshCw } from 'lucide-react';
+import { ImagePlus, Bold, Italic, Heading1, Heading2, Heading3, Pilcrow, List, ListOrdered, Code, X, RefreshCw } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
@@ -65,6 +65,21 @@ export default function CreatePost() {
         ? 'bg-primary/10 text-primary'
         : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'
     }`;
+
+  const SUPPORTED_LANGUAGES = [
+    { label: 'Javascript', value: 'javascript' },
+    { label: 'Typescript', value: 'typescript' },
+    { label: 'HTML', value: 'html' },
+    { label: 'CSS', value: 'css' },
+    { label: 'Python', value: 'python' },
+    { label: 'Java', value: 'java' },
+    { label: 'C++', value: 'cpp' },
+    { label: 'Go', value: 'go' },
+    { label: 'Bash', value: 'bash' },
+    { label: 'JSON', value: 'json' },
+    { label: 'MarkDown', value: 'markdown' },
+    { label: 'Plain Text', value: 'plaintext' },
+  ];
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -300,32 +315,34 @@ export default function CreatePost() {
         {/* Toolbar */}
         <div className="sticky top-16 z-40 bg-white/90 dark:bg-surface-dark/90 backdrop-blur-md rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 p-2 flex items-center justify-between mb-8">
           <div className="flex items-center gap-1">
-            <button type="button" className={toolbarBtn(editor?.isActive('bold') ?? false)} onClick={() => editor?.chain().focus().toggleBold().run()}><Bold className="w-4 h-4" /></button>
-            <button type="button" className={toolbarBtn(editor?.isActive('italic') ?? false)} onClick={() => editor?.chain().focus().toggleItalic().run()}><Italic className="w-4 h-4" /></button>
+            <button type="button" title="Bold" className={toolbarBtn(editor?.isActive('bold') ?? false)} onClick={() => editor?.chain().focus().toggleBold().run()}><Bold className="w-4 h-4" /></button>
+            <button type="button" title="Italic" className={toolbarBtn(editor?.isActive('italic') ?? false)} onClick={() => editor?.chain().focus().toggleItalic().run()}><Italic className="w-4 h-4" /></button>
             <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2" />
-            <button type="button" className={toolbarBtn(editor?.isActive('heading', { level: 1 }) ?? false)} onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}><Heading1 className="w-4 h-4" /></button>
-            <button type="button" className={toolbarBtn(editor?.isActive('heading', { level: 2 }) ?? false)} onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 className="w-4 h-4" /></button>
+            <button type="button" title="Paragraph" className={toolbarBtn(editor?.isActive('paragraph') ?? false)} onClick={() => editor?.chain().focus().setParagraph().run()}><Pilcrow className="w-4 h-4" /></button>
+            <button type="button" title="Heading 1" className={toolbarBtn(editor?.isActive('heading', { level: 1 }) ?? false)} onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}><Heading1 className="w-4 h-4" /></button>
+            <button type="button" title="Heading 2" className={toolbarBtn(editor?.isActive('heading', { level: 2 }) ?? false)} onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 className="w-4 h-4" /></button>
+            <button type="button" title="Heading 3" className={toolbarBtn(editor?.isActive('heading', { level: 3 }) ?? false)} onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}><Heading3 className="w-4 h-4" /></button>
             <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2" />
-            <button type="button" className={toolbarBtn(editor?.isActive('bulletList') ?? false)} onClick={() => editor?.chain().focus().toggleBulletList().run()}><List className="w-4 h-4" /></button>
-            <button type="button" className={toolbarBtn(editor?.isActive('codeBlock') ?? false)} onClick={() => editor?.chain().focus().toggleCodeBlock().run()}><Code className="w-4 h-4" /></button>
+            <button type="button" title="Bullet List" className={toolbarBtn(editor?.isActive('bulletList') ?? false)} onClick={() => editor?.chain().focus().toggleBulletList().run()}><List className="w-4 h-4" /></button>
+            <button type="button" title="Ordered List" className={toolbarBtn(editor?.isActive('orderedList') ?? false)} onClick={() => editor?.chain().focus().toggleOrderedList().run()}><ListOrdered className="w-4 h-4" /></button>
+            <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2" />
+            <button type="button" title="Code Block" className={toolbarBtn(editor?.isActive('codeBlock') ?? false)} onClick={() => editor?.chain().focus().toggleCodeBlock().run()}><Code className="w-4 h-4" /></button>
+            
+            {editor?.isActive('codeBlock') && (
+              <select
+                className="ml-2 px-2 py-1 text-[10px] font-bold bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded focus:outline-none cursor-pointer text-gray-700 dark:text-gray-300"
+                value={editor.getAttributes('codeBlock').language || 'javascript'}
+                onChange={(e) => editor.chain().focus().updateAttributes('codeBlock', { language: e.target.value }).run()}
+                title="Select Language"
+              >
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                  <option key={lang.value} value={lang.value}>{lang.label}</option>
+                ))}
+              </select>
+            )}
           </div>
 
-          <div className="flex gap-3">
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="sm" 
-              className="rounded-lg"
-              onClick={() => {
-                const { title, content, coverImage, categories: selectedCats } = watchedFields;
-                saveDraft({ title, content, coverImage, categories: selectedCats });
-                toast.success('Draft saved manually');
-              }}
-            >
-              Save Draft
-            </Button>
-            <Button type="submit" size="sm" className="rounded-lg px-6" isLoading={isSubmitting}>{isEdit ? 'Update' : 'Publish'}</Button>
-          </div>
+          <Button type="submit" size="sm" className="rounded-lg px-6" isLoading={isSubmitting}>{isEdit ? 'Update' : 'Publish'}</Button>
         </div>
 
         {/* Content */}
