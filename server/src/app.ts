@@ -17,8 +17,10 @@ app.use(helmet());
 const allowedOrigins = [
   config.clientUrl,
   'http://localhost:5173',
-  'http://127.0.0.1:5173',
+  'http://192.168.43.166:5173',
 ].filter(Boolean) as string[];
+
+app.set('trust proxy', 1);
 
 app.use(
   cors({
