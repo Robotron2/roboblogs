@@ -61,27 +61,6 @@ export default function CreatePost() {
     const fetchPost = async () => {
       if (!id) return;
       try {
-        const res = await postsApi.getAll({ search: id }); // Fallback search or we need a getById
-        // Wait, postsApi.getAll search is for query. 
-        // We really need postsApi.getById but the backend getPost is by SLUG or ID?
-        // Let's check api.md or postsApi.ts
-      } catch (err) {
-        toast.error('Failed to load post');
-      }
-    };
-    // fetchPost();
-  }, [id]);
-
-  // Wait, I should check posts.api.ts to see if I have getById.
-  // getBySlug is there. I might need getById for admin.
-  // Backend getPost: router.get('/:slug', optionalProtect, catchAsync(postController.getPost));
-  // In post service: const post = await Post.findOne({ $or: [{ slug: identifier }, { _id: identifier }] })
-  // So getBySlug works for ID too.
-
-  useEffect(() => {
-    const fetchPost = async () => {
-      if (!id) return;
-      try {
         const res = await postsApi.getBySlug(id);
         const data = res.data?.data;
         

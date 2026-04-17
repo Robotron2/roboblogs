@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import Button from '../../components/Button';
-import Loader from '../../components/Loader';
+import LazyImage from '../../components/LazyImage';
+import { PostSkeleton, CommentSkeleton } from '../../components/skeletons';
 import { useAuth } from '../../context/AuthContext';
 import { postsApi } from '../../api/posts.api';
 import { commentsApi } from '../../api/comments.api';
@@ -112,7 +113,7 @@ export default function SinglePost() {
     toast.success('Link copied to clipboard!');
   };
 
-  if (isLoading) return <div className="py-20"><Loader size="lg" /></div>;
+  if (isLoading) return <PostSkeleton />;
   if (!post) return (
     <div className="py-20 text-center">
       <h2 className="text-2xl font-bold mb-4">Article Not Found</h2>
@@ -189,10 +190,11 @@ export default function SinglePost() {
       {/* Cover Image */}
       {post.coverImage && (
         <figure className="mb-12 w-full overflow-hidden rounded-2xl shadow-xl shadow-gray-200/50 dark:shadow-none border border-gray-100 dark:border-gray-800">
-          <img 
+          <LazyImage 
             src={post.coverImage}
             alt={post.title} 
             className="w-full h-auto max-h-[500px] object-cover"
+            wrapperClassName="w-full h-auto"
           />
         </figure>
       )}
@@ -260,7 +262,13 @@ export default function SinglePost() {
 
         {/* Comment List */}
         <div className="space-y-10">
-          {comments.map((comment) => {
+          {isLoading ? (
+            <>
+              <CommentSkeleton />
+              <CommentSkeleton />
+              <CommentSkeleton />
+            </>
+          ) : comments.map((comment) => {
             const commenter = typeof comment.user === 'object' && comment.user !== null ? (comment.user as User) : null;
             return (
               <div key={comment._id} className="flex gap-5 group">

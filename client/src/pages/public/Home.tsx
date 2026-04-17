@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import BlogCard from '../../components/BlogCard';
 import BlogGrid from '../../components/BlogGrid';
+import { PostSkeleton } from '../../components/skeletons';
 import Button from '../../components/Button';
-import Loader from '../../components/Loader';
 import EmptyState from '../../components/EmptyState';
 import { postsApi } from '../../api/posts.api';
 import { newsletterApi } from '../../api/newsletter.api';
@@ -55,7 +55,15 @@ export default function Home() {
     }
   };
 
-  if (isLoading) return <div className="py-24"><Loader size="lg" /></div>;
+  if (isLoading) return (
+    <div className="w-full">
+      <section className="mb-16 pt-8 max-w-4xl">
+        <div className="h-16 w-3/4 bg-gray-100 dark:bg-gray-800 rounded animate-pulse mb-6"></div>
+        <div className="h-6 w-1/2 bg-gray-100 dark:bg-gray-800 rounded animate-pulse"></div>
+      </section>
+      <PostSkeleton />
+    </div>
+  );
   if (posts.length === 0) return (
     <div className="py-24">
       <EmptyState 

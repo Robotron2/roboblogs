@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, MoreVertical, Edit2, Trash2, Eye, EyeOff, ExternalLink, Book } from 'lucide-react';
+import { Search, Filter, Edit2, Trash2, Eye, EyeOff, ExternalLink, Book } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { postsApi } from '../../api/posts.api';
 import { categoriesApi } from '../../api/categories.api';

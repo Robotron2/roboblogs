@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import LazyImage from './LazyImage';
 import type { Post } from '../types';
 
 interface BlogCardProps {
@@ -19,10 +20,11 @@ export default function BlogCard({ post, variant = 'small' }: BlogCardProps) {
       <Link to={`/article/${post.slug}`} className="group block mb-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 bg-white dark:bg-surface-dark rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 transition-all hover:border-gray-200 dark:hover:border-gray-700">
           <div className="lg:col-span-7 h-64 sm:h-72 lg:h-[450px] overflow-hidden">
-            <img
+            <LazyImage
               src={post.coverImage || 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=800&q=80'}
               alt={post.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              wrapperClassName="w-full h-full"
             />
           </div>
           <div className="lg:col-span-5 p-8 lg:p-12 flex flex-col justify-center">
@@ -90,10 +92,11 @@ export default function BlogCard({ post, variant = 'small' }: BlogCardProps) {
   return (
     <Link to={`/article/${post.slug}`} className="group flex flex-col h-full bg-white dark:bg-surface-dark rounded-xl overflow-hidden border border-gray-100 dark:border-gray-800 transition-all hover:border-gray-200 dark:hover:border-gray-700">
       <div className="w-full h-52 overflow-hidden relative">
-        <img
+        <LazyImage
           src={post.coverImage || 'https://images.unsplash.com/photo-1507146153580-69a1fe6d8aa1?w=600&q=80'}
           alt={post.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          wrapperClassName="w-full h-full"
         />
         <div className="absolute top-4 right-4">
           <span className="bg-white/95 dark:bg-surface-dark/95 backdrop-blur-md px-2.5 py-1 rounded text-[10px] font-bold text-gray-900 dark:text-white shadow-sm uppercase tracking-tight">

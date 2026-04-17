@@ -3,8 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import BlogCard from '../../components/BlogCard';
 import BlogGrid from '../../components/BlogGrid';
+import { BlogGridSkeleton } from '../../components/skeletons';
 import Pagination from '../../components/Pagination';
-import Loader from '../../components/Loader';
 import EmptyState from '../../components/EmptyState';
 import { postsApi } from '../../api/posts.api';
 import { categoriesApi } from '../../api/categories.api';
@@ -163,9 +163,7 @@ export default function Blogs() {
 
       {/* Results Section */}
       {isLoading ? (
-        <div className="py-24 flex justify-center">
-          <Loader size="lg" />
-        </div>
+        <BlogGridSkeleton count={9} />
       ) : posts.length > 0 ? (
         <>
           <BlogGrid columns={3}>

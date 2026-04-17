@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Search, Moon, Sun, Menu } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Button from './Button';
+import Skeleton from './Skeleton';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -12,7 +13,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, isAdmin, user } = useAuth();
+  const { isAuthenticated, isAdmin, user, isLoading } = useAuth();
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -79,7 +80,11 @@ export default function Navbar() {
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
 
-          {isAuthenticated ? (
+          {isLoading ? (
+            <div className="flex items-center gap-3">
+              <Skeleton circle width="2rem" height="2rem" />
+            </div>
+          ) : isAuthenticated ? (
             <div className="flex items-center gap-3">
               {isAdmin && (
                 <Link to="/admin">
