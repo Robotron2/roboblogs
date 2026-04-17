@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ImagePlus, Bold, Italic, Heading1, Heading2, Heading3, Pilcrow, List, ListOrdered, Code, X, RefreshCw } from 'lucide-react';
+import { ImagePlus, Bold, Italic, Quote, Heading1, Heading2, Heading3, Pilcrow, List, ListOrdered, Code, X, RefreshCw } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
@@ -326,6 +326,7 @@ export default function CreatePost() {
             <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2" />
             <button type="button" title="Bullet List" className={toolbarBtn(editor?.isActive('bulletList') ?? false)} onClick={() => editor?.chain().focus().toggleBulletList().run()}><List className="w-4 h-4" /></button>
             <button type="button" title="Ordered List" className={toolbarBtn(editor?.isActive('orderedList') ?? false)} onClick={() => editor?.chain().focus().toggleOrderedList().run()}><ListOrdered className="w-4 h-4" /></button>
+            <button type="button" title="Blockquote" className={toolbarBtn(editor?.isActive('blockquote') ?? false)} onClick={() => editor?.chain().focus().toggleBlockquote().run()}><Quote className="w-4 h-4" /></button>
             <div className="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2" />
             <button type="button" title="Code Block" className={toolbarBtn(editor?.isActive('codeBlock') ?? false)} onClick={() => editor?.chain().focus().toggleCodeBlock().run()}><Code className="w-4 h-4" /></button>
             
