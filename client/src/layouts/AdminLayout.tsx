@@ -22,7 +22,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-white dark:bg-background-dark flex flex-col">
       {/* Admin Top Navigation */}
-      <nav className="w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark sticky top-0 z-50">
+      <header className="w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark sticky top-0 z-50">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           
           <div className="flex items-center gap-6">
@@ -30,7 +30,7 @@ export default function AdminLayout() {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white text-lg">R</div>
               RoboBlogs
             </Link>
-            <div className="hidden lg:flex items-center gap-1 text-sm font-medium">
+            <nav aria-label="Admin Navigation" className="hidden lg:flex items-center gap-1 text-sm font-medium">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 const Icon = item.icon;
@@ -49,7 +49,7 @@ export default function AdminLayout() {
                   </Link>
                 );
               })}
-            </div>
+            </nav>
           </div>
 
           <div className="flex items-center gap-4">
@@ -62,6 +62,7 @@ export default function AdminLayout() {
               onClick={toggleTheme}
               className="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
               title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label="Toggle Theme"
             >
               {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
@@ -73,6 +74,7 @@ export default function AdminLayout() {
               }}
               className="p-2 text-gray-400 hover:text-error transition-colors rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
               title="Logout"
+              aria-label="Logout"
             >
               <LogOut className="w-5 h-5" />
             </button>
@@ -84,12 +86,14 @@ export default function AdminLayout() {
             <button 
               className="lg:hidden p-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
               onClick={() => setIsMobileMenuOpen(true)}
+              aria-label="Open mobile menu"
+              aria-expanded={isMobileMenuOpen}
             >
               <Menu className="w-5 h-5" />
             </button>
           </div>
         </div>
-      </nav>
+      </header>
 
       {/* Mobile Drawer Overlay */}
       <div 
@@ -125,7 +129,7 @@ export default function AdminLayout() {
             </button>
           </div>
 
-          <div className="space-y-1 px-4 py-6">
+          <nav aria-label="Mobile Admin Navigation" className="space-y-1 px-4 py-6">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               const Icon = item.icon;
@@ -140,12 +144,12 @@ export default function AdminLayout() {
                       : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-5 h-5" aria-hidden="true" />
                   {item.name}
                 </Link>
               );
             })}
-          </div>
+          </nav>
           
           <div className="mt-auto border-t border-gray-100 dark:border-gray-800 p-4">
             <button 
