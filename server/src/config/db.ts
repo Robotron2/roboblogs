@@ -1,37 +1,46 @@
 import mongoose from "mongoose"
 import config from "./index"
 
-// const connectDB = async () => {
-// 	try {
-// 		if (!config.mongoose.url) {
-// 			throw new Error("MONGO_URI is not defined in configuration")
-// 		}
-// 		const connect = await mongoose.connect(config.mongoose.url)
-// 		console.log(`Connected to Atlas`)
+let cached = (global as any).mongoose
 
-// 		// const connect = await mongoose.connect(config.mongoose.url)
-// 		// console.log(`Connected to MongoLocal`)
-// 	} catch (error) {
-// 		console.log(error)
-// 	}
-// }
-// export default connectDB
+if (!cached) {
+	cached = (global as any).mongoose = { conn: null, promise: null }
+}
 
 const connectDB = async () => {
-	try {
+	if (cached.conn && cached.conn.connection.readyState === 1) {
+		return cached.conn
+	}
+
+	if (!cached.promise) {
 		if (!config.mongoose.url) {
-			throw new Error("MONGO_URI is not defined in configuration")
+			throw new Error("MONGO_URI is not defined")
 		}
 
-		const conn = await mongoose.connect(config.mongoose.url)
+		const opts = {
+			bufferCommands: false,
+		}
 
-		const isAtlas = config.mongoose.url.includes("mongodb+srv")
+		cached.promise = mongoose
+			.connect(config.mongoose.url, opts)
+			.then((mongooseInstance) => {
+				console.log(`MongoDB Connected: ${mongooseInstance.connection.host}`)
+				return mongooseInstance
+			})
+			.catch((error) => {
+				cached.promise = null
+				throw error
+			})
+	}
 
-		console.log(`MongoDB Connected (${isAtlas ? "Atlas" : "Local"}): ${conn.connection.host}`)
+	try {
+		cached.conn = await cached.promise
 	} catch (error) {
-		console.error("MongoDB connection error:", error)
+		cached.promise = null
 		throw error
 	}
+
+	return cached.conn
 }
 
 export default connectDB
