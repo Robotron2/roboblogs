@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://roboblogs.the0philus.xyz/sitemap.xml

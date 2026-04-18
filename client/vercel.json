@@ -1,6 +1,6 @@
 {
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/article/:slug", "destination": "/api/seo" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
