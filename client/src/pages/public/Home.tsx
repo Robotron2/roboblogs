@@ -9,6 +9,7 @@ import { postsApi } from '../../api/posts.api';
 import { newsletterApi } from '../../api/newsletter.api';
 import type { Post as PostType } from '../../types';
 import { useEffect, useState } from 'react';
+import SEO from '../../components/SEO';
 
 export default function Home() {
   const [posts, setPosts] = useState<PostType[]>([]);
@@ -79,6 +80,7 @@ export default function Home() {
 
   return (
     <div className="w-full">
+      <SEO />
       {/* Hero Header */}
       <section className="mb-16 pt-8 max-w-4xl">
         <h1 className="text-5xl md:text-7xl font-bold text-main-light dark:text-main-dark tracking-tight leading-[1.1] mb-6">

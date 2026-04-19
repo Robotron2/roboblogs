@@ -14,6 +14,7 @@ import { likesApi } from '../../api/likes.api';
 import { commentSchema } from '../../utils/schemas';
 import type { Post, Comment, User } from '../../types';
 import type { CommentFormData } from '../../utils/schemas';
+import SEO from '../../components/SEO';
 import '../../styles/editor.css';
 
 export default function SinglePost() {
@@ -125,11 +126,19 @@ export default function SinglePost() {
   const author = typeof post.author === 'object' ? (post.author as User) : null;
 
   return (
-    <article className="w-full max-w-3xl mx-auto pb-16">
-      <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-body hover:text-gray-900 dark:hover:text-white transition-colors mb-8 group">
-        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-        Back to articles
-      </Link>
+    <>
+      <SEO 
+        title={post.title} 
+        description={post.content.replace(/<[^>]*>?/gm, '').substring(0, 160)} 
+        image={post.coverImage}
+        type="article"
+        author={author?.name}
+      />
+      <article className="w-full max-w-3xl mx-auto pb-16">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-body hover:text-gray-900 dark:hover:text-white transition-colors mb-8 group">
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          Back to articles
+        </Link>
 
       <header className="mb-8">
         <div className="flex flex-wrap items-center gap-2 mb-6">
@@ -301,5 +310,6 @@ export default function SinglePost() {
         </div>
       </section>
     </article>
+    </>
   );
 }

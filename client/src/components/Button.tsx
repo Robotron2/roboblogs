@@ -9,14 +9,14 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', size = 'md', isLoading, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none rounded-md';
+    const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none rounded-md';
     
     const variants = {
-      primary: 'bg-primary text-white hover:bg-primary-700 focus:ring-primary-500',
-      secondary: 'bg-gray-100 text-main-light hover:bg-gray-200 focus:ring-gray-500 dark:bg-gray-800 dark:text-main-dark dark:hover:bg-gray-700',
-      outline: 'border border-outline bg-transparent text-main-light hover:bg-gray-50 focus:ring-primary-500 dark:border-gray-600 dark:text-main-dark dark:hover:bg-gray-800',
-      ghost: 'bg-transparent text-main-light hover:bg-gray-100 focus:ring-gray-500 dark:text-main-dark dark:hover:bg-gray-800',
-      danger: 'bg-error text-white hover:bg-red-700 focus:ring-red-500',
+      primary: 'bg-primary text-white hover:bg-primary-700 focus-visible:ring-primary-500',
+      secondary: 'bg-gray-100 text-main-light hover:bg-gray-200 focus-visible:ring-gray-500 dark:bg-gray-800 dark:text-main-dark dark:hover:bg-gray-700',
+      outline: 'border border-outline bg-transparent text-main-light hover:bg-gray-50 focus-visible:ring-primary-500 dark:border-gray-600 dark:text-main-dark dark:hover:bg-gray-800',
+      ghost: 'bg-transparent text-main-light hover:bg-gray-100 focus-visible:ring-gray-500 dark:text-main-dark dark:hover:bg-gray-800',
+      danger: 'bg-error text-white hover:bg-red-700 focus-visible:ring-red-500',
     };
 
     const sizes = {

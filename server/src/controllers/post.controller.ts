@@ -48,3 +48,43 @@ export const publishPost = catchAsync(async (req: Request, res: Response) => {
   const post = await postService.publishPost(req.params.id as string);
   res.status(200).json(new ApiResponse(true, 'Post published successfully', post));
 });
+
+export const getRssFeed = catchAsync(async (req: Request, res: Response) => {
+  const result = await postService.getAllPosts({ limit: 20 }, undefined, false);
+  const posts = result.posts;
+  
+  const siteUrl = 'https://roboblogs.the0philus.xyz';
+  
+  let rss = `<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>RoboBlogs</title>
+    <link>${siteUrl}</link>
+    <description>Exploring the forefront of robotics, artificial intelligence, and technology innovations at RoboBlogs.</description>
+    <language>en-us</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+`;
+
+  posts.forEach((post: any) => {
+    const postUrl = `${siteUrl}/article/${post.slug}`;
+    const authorName = post.author?.name || 'Unknown';
+    rss += `
+    <item>
+      <title>${post.title.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</title>
+      <link>${postUrl}</link>
+      <guid>${postUrl}</guid>
+      <pubDate>${new Date(post.createdAt).toUTCString()}</pubDate>
+      <category>${(post.categories && post.categories[0] && post.categories[0].name) || 'Technology'}</category>
+      <author>${authorName}</author>
+      <description><![CDATA[${post.content.replace(/<[^>]*>?/gm, '').substring(0, 160)}...]]></description>
+      <content:encoded><![CDATA[${post.content}]]></content:encoded>
+    </item>`;
+  });
+
+  rss += `
+  </channel>
+</rss>`;
+
+  res.set('Content-Type', 'application/rss+xml');
+  res.status(200).send(rss);
+});

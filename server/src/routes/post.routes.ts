@@ -6,6 +6,7 @@ import { validatePost } from '../validators/post.validator';
 
 const router = express.Router();
 
+router.get('/feed/rss', postController.getRssFeed);
 router.get('/', optionalProtect, postController.getPosts);
 router.get('/:slug', optionalProtect, postController.getPost);
 

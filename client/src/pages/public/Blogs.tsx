@@ -11,6 +11,7 @@ import { Search } from 'lucide-react';
 import { postsApi } from '../../api/posts.api';
 import { categoriesApi } from '../../api/categories.api';
 import type { Post, Category } from '../../types';
+import SEO from '../../components/SEO';
 
 export default function Blogs() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -106,6 +107,10 @@ export default function Blogs() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <SEO 
+        title="Library and Articles"
+        description="Discover deep dives into robotics, artificial intelligence, and the future of human-machine interaction curated by the RoboBlogs editorial team."
+      />
       {/* Header Section */}
       <header className="mb-12 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-main-light dark:text-main-dark mb-4 tracking-tight">
