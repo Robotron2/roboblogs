@@ -42,9 +42,7 @@ app.use(
 )
 
 // Morgan logging
-if (config.env !== "test") {
-	app.use(morgan("dev"))
-}
+app.use(morgan(config.env === "production" ? "combined" : "dev"))
 
 // Parse json request body
 app.use(express.json())
