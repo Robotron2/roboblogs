@@ -20,7 +20,7 @@ const allowedOrigins = [
 	"http://localhost:5173",
 	"http://192.168.43.166:5173",
 	"https://roboblogs-w6l9.vercel.app",
-	"https://roboblogs.the0philus.xyz",
+	"https://roboblogs.the0ph1lus.xyz",
 ].filter(Boolean) as string[]
 
 app.set("trust proxy", 1)
