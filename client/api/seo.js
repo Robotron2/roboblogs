@@ -6,11 +6,9 @@ module.exports = async (req, res) => {
 	const baseUrl = process.env.VITE_API_URL || "https://roboblogs.the0philus.xyz/api/v1"
 
 	try {
-		// 1. Fetch the data from the backend
 		const response = await fetch(`${baseUrl}/posts/${slug}`)
 
 		if (!response.ok) {
-			// Fallback to basic html
 			return sendDefaultHtml(res)
 		}
 
@@ -21,20 +19,17 @@ module.exports = async (req, res) => {
 			return sendDefaultHtml(res)
 		}
 
-		// 2. Read the static index.html built by Vite
 		let indexHtml = ""
 		try {
 			indexHtml = fs.readFileSync(path.join(__dirname, "..", "dist", "index.html"), "utf8")
 		} catch (e) {
-			// In local dev `dist` might not exist yet, fallback if needed
 			return res.status(500).send("dist/index.html not found. Please build the client.")
 		}
 
-		// 3. Prepare meta tags and JSON-LD
+		// Meta tags and JSON-LD
 		const siteName = "RoboBlogs"
 		const postUrl = `https://roboblogs.the0philus.xyz/article/${post.slug}`
 		const authorName = post.author && post.author.name ? post.author.name : "Unknown"
-		// Clean description: strip HTML tags and truncate
 		const plainDescription = post.content.replace(/<[^>]+>/g, "").substring(0, 160) + "..."
 
 		const metaTags = `
@@ -42,14 +37,14 @@ module.exports = async (req, res) => {
       <meta name="description" content="${plainDescription}" />
       <meta property="og:title" content="${post.title}" />
       <meta property="og:description" content="${plainDescription}" />
-      <meta property="og:image" content="${post.coverImage || ""}" />
+      <meta property="og:image" content="${post.coverImage || "https://roboblogs.the0philus.xyz/assets/branding/og-home.png"}" />
       <meta property="og:url" content="${postUrl}" />
       <meta property="og:type" content="article" />
       <meta property="article:published_time" content="${post.createdAt}" />
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content="${post.title}" />
       <meta name="twitter:description" content="${plainDescription}" />
-      <meta name="twitter:image" content="${post.coverImage || ""}" />
+      <meta name="twitter:image" content="${post.coverImage || "https://roboblogs.the0philus.xyz/assets/branding/og-home.png"}" />
     `
 
 		const jsonLd = {
