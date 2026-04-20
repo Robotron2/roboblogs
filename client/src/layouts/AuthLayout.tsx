@@ -1,11 +1,21 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 export default function AuthLayout() {
+  const { isDark } = useTheme();
+
   return (
     <div className="min-h-screen bg-white dark:bg-background-dark flex flex-col">
       
       {/* Centered form area */}
-      <main className="flex-1 flex items-center justify-center px-4 py-12">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+        <Link to="/" className="mb-8" aria-label="Go to Homepage">
+          <img 
+            src={isDark ? "/assets/branding/logo-dark.png" : "/assets/branding/logo-light.png"} 
+            alt="RoboBlogs Logo" 
+            className="h-16 w-auto object-contain scale-110" 
+          />
+        </Link>
         <div className="w-full max-w-sm">
           <Outlet />
         </div>
@@ -14,8 +24,12 @@ export default function AuthLayout() {
       {/* Simple inline footer matching design */}
       <footer className="w-full py-6 px-4 sm:px-8">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 dark:text-gray-400 gap-4">
-          <div>
-            <p className="font-bold text-gray-900 dark:text-white">RoboBlogs</p>
+          <div className="flex flex-col gap-2">
+            <img 
+              src={isDark ? "/assets/branding/logo-dark.png" : "/assets/branding/logo-light.png"} 
+              alt="RoboBlogs Logo" 
+              className="h-10 w-auto object-contain" 
+            />
             <p>&copy; {new Date().getFullYear()} RoboBlogs. All rights reserved.</p>
           </div>
           <div className="flex gap-6">

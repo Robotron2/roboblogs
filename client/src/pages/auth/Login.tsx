@@ -42,14 +42,10 @@ export default function Login() {
 
   return (
     <div className="w-full">
-      <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-body hover:text-gray-900 dark:hover:text-white transition-colors mb-8">
-        <ArrowLeft className="w-4 h-4" />
-        Back to Home
-      </Link>
+     
 
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1">RoboBlogs</h1>
-        <h2 className="text-xl font-medium text-gray-800 dark:text-gray-100 mb-1">Sign in</h2>
+        
         <p className="text-sm text-body">Use your RoboBlogs Account</p>
       </div>
 
@@ -66,6 +62,10 @@ export default function Login() {
           error={errors.password?.message}
           {...register('password')}
         />
+         <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-body hover:text-gray-900 dark:hover:text-white transition-colors mb-8">
+        <ArrowLeft className="w-4 h-4" />
+        Back to Home
+      </Link>
 
         <div className="pt-1">
           <Link to="/forgot-password" className="text-sm font-medium text-primary hover:text-primary-700 transition-colors">

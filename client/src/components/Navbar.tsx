@@ -99,8 +99,12 @@ export default function Navbar() {
     <nav aria-label="Main Navigation" className="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-8">
-          <Link to="/" className="text-lg font-bold tracking-tight text-main-light dark:text-main-dark">
-            RoboBlogs
+          <Link to="/" className="flex items-center gap-2">
+            <img 
+              src={isDark ? "/assets/branding/logo-dark.png" : "/assets/branding/logo-light.png"} 
+              alt="RoboBlogs Logo" 
+              className="h-11 w-auto object-contain" 
+            />
           </Link>
           
           <div className="hidden md:flex items-center gap-6 text-sm font-medium">
@@ -211,10 +215,14 @@ export default function Navbar() {
           <div className="flex px-4 pb-2 pt-4 justify-between items-center border-b border-gray-100 dark:border-gray-800">
             <Link 
               to="/" 
-              className="text-lg font-bold tracking-tight text-main-light dark:text-main-dark"
+              className="flex items-center gap-2"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              RoboBlogs
+              <img 
+                src={isDark ? "/assets/branding/logo-dark.png" : "/assets/branding/logo-light.png"} 
+                alt="RoboBlogs Logo" 
+                className="h-9 w-auto object-contain" 
+              />
             </Link>
             <button 
               type="button" 

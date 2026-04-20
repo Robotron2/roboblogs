@@ -3,17 +3,49 @@
 
     <head>
         <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/png" href="/assets/branding/logo-icon.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-        <link rel="manifest" href="/site.webmanifest">
-        <title>RoboBlogs</title>
+        <link rel="apple-touch-icon" href="/assets/branding/logo-icon.png">
+
+
+
+        <title>RoboBlogs | Modern Blogging Platform</title>
+
+        <meta name="description"
+            content="Read, write, and explore insightful blogs on RoboBlogs. Discover trending articles and share your thoughts." />
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="RoboBlogs — Modern Blogging Platform" />
+        <meta property="og:description" content="Read, write, and explore insightful blogs on RoboBlogs." />
+        <meta property="og:url" content="https://roboblogs.the0philus.xyz" />
+        <meta property="og:image" content="https://roboblogs.the0philus.xyz/assets/branding/og-home.png" />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="RoboBlogs | Modern Blogging Platform" />
+        <meta name="twitter:description" content="Read, write, and explore insightful blogs on RoboBlogs." />
+        <meta name="twitter:image" content="https://roboblogs.the0philus.xyz/assets/branding/og-home.png" />
+
+
+        <link rel="canonical" href="https://roboblogs.the0philus.xyz" />
     </head>
 
     <body>
         <div id="root"></div>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "RoboBlogs",
+          "url": "https://roboblogs.the0philus.xyz",
+          "description": "A modern blogging platform to read and share ideas.",
+          "publisher": {
+            "@type": "Organization",
+            "name": "RoboBlogs"
+          }
+        }
+        </script>
         <script type="module" src="/src/main.tsx"></script>
     </body>
 

@@ -25,13 +25,12 @@ export default function AdminLayout() {
 			<header className="w-full border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark sticky top-0 z-50">
 				<div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 					<div className="flex items-center gap-6">
-						<Link
-							to="/"
-							className="text-xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-							<div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white text-lg">
-								R
-							</div>
-							RoboBlogs
+						<Link to="/" className="flex items-center gap-2">
+							<img 
+								src={isDark ? "/assets/branding/logo-dark.png" : "/assets/branding/logo-light.png"} 
+								alt="RoboBlogs Logo" 
+								className="h-11 w-auto object-contain" 
+							/>
 						</Link>
 
 						{/* <Link to="/" className="flex items-center gap-2">
@@ -127,13 +126,12 @@ export default function AdminLayout() {
 						isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
 					}`}>
 					<div className="flex px-4 pb-2 pt-5 justify-between items-center border-b border-gray-100 dark:border-gray-800">
-						<Link
-							to="/"
-							className="text-xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-							<div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white text-lg">
-								R
-							</div>
-							RoboBlogs
+						<Link to="/" className="flex items-center gap-2">
+							<img 
+								src={isDark ? "/assets/branding/logo-dark.png" : "/assets/branding/logo-light.png"} 
+								alt="RoboBlogs Logo" 
+								className="h-9 w-auto object-contain" 
+							/>
 						</Link>
 						<button
 							type="button"
@@ -187,8 +185,12 @@ export default function AdminLayout() {
 			{/* Footer */}
 			<footer className="w-full mt-auto py-6 text-xs text-gray-400">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-					<div>
-						<p className="font-bold text-gray-900 dark:text-white">RoboBlogs</p>
+					<div className="flex flex-col gap-2">
+						<img 
+							src={isDark ? "/assets/branding/logo-dark.png" : "/assets/branding/logo-light.png"} 
+							alt="RoboBlogs Logo" 
+							className="h-10 w-auto object-contain" 
+						/>
 						<p>The future of intelligent storytelling.</p>
 					</div>
 					<div className="flex gap-6">

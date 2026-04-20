@@ -1,7 +1,10 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { useTheme } from '../context/ThemeContext';
 
 export default function MainLayout() {
+  const { isDark } = useTheme();
+
   return (
     <div className="min-h-screen bg-white dark:bg-background-dark flex flex-col">
       <header>
@@ -14,8 +17,12 @@ export default function MainLayout() {
       
       <footer className="w-full border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-background-dark py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-          <div>
-            <p className="font-bold text-gray-900 dark:text-white">RoboBlogs</p>
+          <div className="flex flex-col gap-2">
+            <img 
+              src={isDark ? "/assets/branding/logo-dark.png" : "/assets/branding/logo-light.png"} 
+              alt="RoboBlogs Logo" 
+              className="h-10 w-auto object-contain" 
+            />
             <p>&copy; {new Date().getFullYear()} RoboBlogs. All rights reserved.</p>
           </div>
           <div className="flex gap-6">

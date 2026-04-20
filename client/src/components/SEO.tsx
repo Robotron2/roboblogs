@@ -26,7 +26,7 @@ export default function SEO({
   const seo = {
     title: title ? `${title} | ${defaultName}` : defaultTitle,
     description: description || defaultDescription,
-    image: image || "https://roboblogs.the0philus.xyz/og-image.jpg",
+    image: image || "https://roboblogs.the0philus.xyz/assets/branding/og-home.png",
     url: url || (typeof window !== 'undefined' ? window.location.href : "https://roboblogs.the0philus.xyz"),
     type: type || "website",
     name: name || defaultName,
